@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Learning Dashboard — LeapKids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#FFD93D;--coral:#FF6B6B;--teal:#4ECDC4;--navy:#1A1F5E;
+  --purple:#7C5CBF;--green:#6BCB77;--orange:#FF8E53;--pink:#FF6EB4;
+  --white:#FFFFFF;--light-bg:#F8F9FF;--text:#2D2D44;--muted:#6B7280;
+  --sidebar-w:240px;--card-shadow:0 4px 20px rgba(26,31,94,0.08);--radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--light-bg);color:var(--text);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(26,31,94,0.03) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--navy);display:flex;flex-direction:column;
+  z-index:200;transition:transform 0.3s ease;overflow-y:auto;
+}
+.sidebar-logo{padding:22px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo a{font-family:'Baloo 2',cursive;font-size:1.4rem;color:#fff;text-decoration:none;}
+.sidebar-logo a span{color:var(--coral);}
+.student-info{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.student-avatar{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:10px;}
+.student-name{font-size:0.92rem;font-weight:800;color:#fff;margin-bottom:2px;}
+.student-grade{font-size:0.75rem;color:rgba(255,255,255,0.5);font-weight:600;}
+.xp-bar-wrap{margin-top:10px;}
+.xp-label{display:flex;justify-content:space-between;font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:5px;}
+.xp-bar{height:6px;background:rgba(255,255,255,0.12);border-radius:50px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:50px;transition:width 1s ease;}
+
+.nav-section{padding:12px 12px 6px;font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.3);}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 12px;margin:2px 8px;border-radius:12px;cursor:pointer;transition:all 0.2s;text-decoration:none;font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.6);}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);}
+.nav-item.active{background:rgba(255,255,255,0.14);color:#fff;}
+.nav-item .ni{font-size:1.15rem;width:22px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--coral);color:#fff;font-size:0.62rem;font-weight:800;padding:2px 7px;border-radius:50px;}
+
+.sidebar-bottom{margin-top:auto;padding:14px 8px;border-top:1px solid rgba(255,255,255,0.08);}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);min-height:100vh;position:relative;z-index:1;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--white);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 12px rgba(26,31,94,0.06);position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.menu-btn{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px;}
+.page-title{font-family:'Baloo 2',cursive;font-size:1.35rem;color:var(--navy);}
+.topbar-right{display:flex;align-items:center;gap:14px;}
+.streak-pill{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:2px solid #FFD93D;border-radius:50px;padding:6px 14px;font-size:0.8rem;font-weight:800;color:#e65100;display:flex;align-items:center;gap:5px;}
+.notif-btn{width:38px;height:38px;border-radius:12px;background:var(--light-bg);border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;position:relative;}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--coral);border:1.5px solid var(--white);}
+
+/* ── CONTENT ── */
+.content{padding:28px;display:none;}
+.content.active{display:block;}
+
+/* ── DASHBOARD ── */
+.welcome-banner{background:linear-gradient(135deg,var(--navy) 0%,#2D3580 100%);border-radius:var(--radius);padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.welcome-banner::before{content:'🚀';position:absolute;font-size:10rem;opacity:0.06;right:-10px;top:-20px;pointer-events:none;}
+.wb-text h2{font-family:'Baloo 2',cursive;font-size:1.6rem;color:#fff;margin-bottom:6px;}
+.wb-text p{font-size:0.88rem;color:rgba(255,255,255,0.65);font-weight:600;line-height:1.6;}
+.wb-cta{background:var(--yellow);color:var(--navy);border:none;border-radius:50px;padding:11px 22px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;cursor:pointer;white-space:nowrap;transition:transform 0.18s,box-shadow 0.18s;}
+.wb-cta:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(255,217,61,0.4);}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:var(--card-shadow);transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-3px);}
+.stat-icon{font-size:1.8rem;margin-bottom:10px;}
+.stat-val{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--navy);line-height:1;}
+.stat-lbl{font-size:0.75rem;color:var(--muted);font-weight:700;margin-top:3px;}
+.stat-delta{font-size:0.72rem;font-weight:800;margin-top:5px;}
+.delta-up{color:var(--green);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:24px;}
+
+.card{background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--card-shadow);}
+.card-title{font-family:'Baloo 2',cursive;font-size:1.05rem;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.card-title a{font-size:0.75rem;font-weight:800;color:var(--coral);text-decoration:none;font-family:'Nunito',sans-serif;}
+
+/* NEXT CLASS */
+.next-class-card{background:linear-gradient(135deg,var(--coral),var(--orange));border-radius:var(--radius);padding:22px;color:#fff;position:relative;overflow:hidden;}
+.next-class-card::before{content:'💻';position:absolute;font-size:6rem;opacity:0.1;right:-10px;bottom:-10px;}
+.nc-tag{background:rgba(255,255,255,0.2);display:inline-block;border-radius:50px;padding:3px 12px;font-size:0.72rem;font-weight:800;margin-bottom:10px;}
+.nc-title{font-family:'Baloo 2',cursive;font-size:1.3rem;margin-bottom:4px;}
+.nc-sub{font-size:0.8rem;opacity:0.8;font-weight:600;margin-bottom:16px;}
+.nc-meta{display:flex;gap:16px;margin-bottom:18px;}
+.nc-meta-item{font-size:0.78rem;font-weight:700;display:flex;align-items:center;gap:5px;}
+.nc-btn{background:rgba(255,255,255,0.22);border:2px solid rgba(255,255,255,0.5);color:#fff;border-radius:50px;padding:9px 20px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
+.nc-btn:hover{background:rgba(255,255,255,0.35);}
+
+/* PROGRESS BARS */
+.prog-list{display:flex;flex-direction:column;gap:14px;}
+.prog-item{}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.prog-name{font-size:0.85rem;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:6px;}
+.prog-pct{font-size:0.78rem;font-weight:800;color:var(--muted);}
+.prog-bar{height:8px;background:var(--light-bg);border-radius:50px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:50px;transition:width 1.2s ease;}
+.pf-coral{background:linear-gradient(90deg,var(--coral),var(--orange));}
+.pf-teal{background:linear-gradient(90deg,var(--teal),#2aaba0);}
+.pf-yellow{background:linear-gradient(90deg,var(--yellow),var(--orange));}
+
+/* ACTIVITY FEED */
+.activity-list{display:flex;flex-direction:column;gap:10px;}
+.activity-item{display:flex;gap:11px;align-items:flex-start;}
+.act-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.act-text{flex:1;}
+.act-title{font-size:0.83rem;font-weight:700;color:var(--text);margin-bottom:2px;}
+.act-time{font-size:0.72rem;color:var(--muted);font-weight:600;}
+
+/* UPCOMING CLASSES */
+.class-list{display:flex;flex-direction:column;gap:10px;}
+.class-item{display:flex;gap:12px;align-items:center;padding:12px;background:var(--light-bg);border-radius:12px;transition:background 0.2s;}
+.class-item:hover{background:#f0f0fa;}
+.class-day{width:42px;height:46px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.class-day-num{font-family:'Baloo 2',cursive;font-size:1.1rem;line-height:1;color:#fff;}
+.class-day-name{font-size:0.6rem;font-weight:800;color:rgba(255,255,255,0.75);text-transform:uppercase;}
+.class-info{flex:1;}
+.class-name{font-size:0.85rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.class-time{font-size:0.75rem;color:var(--muted);font-weight:600;}
+.class-badge{font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:50px;white-space:nowrap;}
+
+/* ── COURSES ── */
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-bottom:24px;}
+.course-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--card-shadow);transition:transform 0.22s,box-shadow 0.22s;cursor:pointer;}
+.course-card:hover{transform:translateY(-5px);box-shadow:0 12px 36px rgba(26,31,94,0.14);}
+.course-thumb{height:130px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;}
+.ct-coral{background:linear-gradient(135deg,#FFE0E0,#FFB3B3);}
+.ct-teal{background:linear-gradient(135deg,#E0F7F6,#B2EBE8);}
+.ct-yellow{background:linear-gradient(135deg,#FFF9D6,#FFE082);}
+.course-lock{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.85);border-radius:8px;padding:4px 8px;font-size:0.7rem;font-weight:800;display:flex;align-items:center;gap:4px;}
+.course-body{padding:18px;}
+.course-tag{font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:50px;display:inline-block;margin-bottom:8px;}
+.ct-code{background:#fff0f0;color:var(--coral);}
+.ct-rob{background:#edfafa;color:#2aaba0;}
+.ct-fin{background:#fffbea;color:#c49a00;}
+.course-name{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--navy);margin-bottom:5px;}
+.course-desc{font-size:0.8rem;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:14px;}
+.course-progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.cp-label{font-size:0.75rem;font-weight:700;color:var(--muted);}
+.cp-pct{font-size:0.75rem;font-weight:800;color:var(--navy);}
+.course-prog-bar{height:7px;background:var(--light-bg);border-radius:50px;overflow:hidden;margin-bottom:14px;}
+.cpb-fill{height:100%;border-radius:50px;}
+.course-footer{display:flex;justify-content:space-between;align-items:center;}
+.course-meta{font-size:0.72rem;color:var(--muted);font-weight:600;}
+.continue-btn{font-size:0.75rem;font-weight:800;padding:7px 15px;border-radius:50px;border:none;cursor:pointer;transition:transform 0.18s;color:#fff;}
+.continue-btn:hover{transform:translateY(-1px);}
+
+/* LESSON VIEW */
+.lesson-view{display:none;background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:var(--card-shadow);}
+.lesson-view.show{display:block;}
+.lesson-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.back-btn{background:var(--light-bg);border:none;border-radius:12px;padding:9px 16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;cursor:pointer;color:var(--muted);transition:background 0.2s;}
+.back-btn:hover{background:#e8eaf8;}
+.lesson-modules{display:flex;flex-direction:column;gap:10px;}
+.lesson-module{border:1.5px solid #e8eaf8;border-radius:14px;overflow:hidden;transition:border-color 0.2s;}
+.lesson-module:hover{border-color:var(--coral);}
+.lm-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;background:var(--white);}
+.lm-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.lm-info{flex:1;}
+.lm-title{font-size:0.9rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.lm-sub{font-size:0.75rem;color:var(--muted);font-weight:600;}
+.lm-status{font-size:0.72rem;font-weight:800;padding:4px 10px;border-radius:50px;}
+.ls-done{background:#e8fff0;color:var(--green);}
+.ls-active{background:#fff0f0;color:var(--coral);}
+.ls-locked{background:#f0f0f8;color:var(--muted);}
+.lm-body{border-top:1px solid #f0f0f8;padding:16px 18px;background:var(--light-bg);display:none;}
+.lm-body.open{display:block;}
+.lesson-list{display:flex;flex-direction:column;gap:8px;}
+.lesson-item{display:flex;align-items:center;gap:11px;padding:10px 12px;background:var(--white);border-radius:10px;cursor:pointer;transition:all 0.2s;border:1.5px solid transparent;}
+.lesson-item:hover{border-color:var(--coral);background:#fff8f8;}
+.lesson-item.done{opacity:0.7;}
+.li-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;flex-shrink:0;}
+.li-title{flex:1;font-size:0.83rem;font-weight:700;color:var(--text);}
+.li-dur{font-size:0.7rem;color:var(--muted);font-weight:600;}
+
+/* ── SCHEDULE ── */
+.schedule-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.week-nav{display:flex;align-items:center;gap:12px;}
+.week-btn{background:var(--white);border:1.5px solid #e8eaf8;border-radius:10px;padding:7px 12px;cursor:pointer;font-size:1rem;transition:all 0.2s;}
+.week-btn:hover{border-color:var(--coral);}
+.week-label{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--navy);}
+.week-days{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:20px;}
+.day-cell{background:var(--white);border-radius:14px;padding:12px 6px;text-align:center;box-shadow:var(--card-shadow);cursor:pointer;transition:all 0.2s;border:2px solid transparent;}
+.day-cell:hover{border-color:var(--coral);}
+.day-cell.today{border-color:var(--coral);background:#fff0f0;}
+.day-cell.has-class{background:linear-gradient(135deg,#fff0f0,#ffe8e8);}
+.dc-name{font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:5px;}
+.dc-num{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--navy);margin-bottom:5px;}
+.dc-dot{width:6px;height:6px;border-radius:50%;background:var(--coral);margin:0 auto;}
+.dc-dot.hidden{opacity:0;}
+
+.schedule-list{display:flex;flex-direction:column;gap:12px;}
+.schedule-item{display:flex;gap:16px;align-items:stretch;}
+.si-time{width:70px;flex-shrink:0;text-align:right;}
+.si-time-main{font-size:0.88rem;font-weight:800;color:var(--navy);}
+.si-time-ampm{font-size:0.7rem;color:var(--muted);font-weight:600;}
+.si-line{width:2px;background:#e8eaf8;flex-shrink:0;position:relative;}
+.si-dot{width:10px;height:10px;border-radius:50%;position:absolute;top:14px;left:50%;transform:translateX(-50%);border:2px solid var(--white);}
+.si-card{flex:1;background:var(--white);border-radius:14px;padding:14px 16px;box-shadow:var(--card-shadow);border-left:4px solid transparent;transition:transform 0.2s;}
+.si-card:hover{transform:translateX(4px);}
+.si-title{font-size:0.9rem;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.si-meta{font-size:0.75rem;color:var(--muted);font-weight:600;display:flex;gap:12px;margin-bottom:10px;}
+.si-join{font-size:0.78rem;font-weight:800;padding:6px 16px;border-radius:50px;border:none;cursor:pointer;color:#fff;transition:all 0.18s;}
+.si-join:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+
+/* ── BADGES ── */
+.badges-hero{background:linear-gradient(135deg,var(--purple),#5C3A9E);border-radius:var(--radius);padding:24px 28px;margin-bottom:24px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden;}
+.badges-hero::before{content:'🏆';position:absolute;font-size:9rem;opacity:0.07;right:-10px;bottom:-20px;}
+.bh-text h2{font-family:'Baloo 2',cursive;font-size:1.5rem;margin-bottom:6px;}
+.bh-text p{font-size:0.85rem;opacity:0.75;font-weight:600;line-height:1.6;}
+.bh-stats{display:flex;gap:20px;flex-shrink:0;}
+.bhs-item{text-align:center;}
+.bhs-num{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--yellow);}
+.bhs-label{font-size:0.7rem;opacity:0.6;font-weight:700;}
+
+.badges-section-title{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--navy);margin-bottom:14px;margin-top:4px;}
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;margin-bottom:24px;}
+.badge-card{background:var(--white);border-radius:16px;padding:18px 12px;text-align:center;box-shadow:var(--card-shadow);transition:transform 0.2s;cursor:default;border:2px solid transparent;}
+.badge-card.earned{cursor:pointer;}
+.badge-card.earned:hover{transform:translateY(-4px);border-color:var(--yellow);}
+.badge-card.locked{opacity:0.45;filter:grayscale(0.5);}
+.badge-emoji{font-size:2.4rem;margin-bottom:8px;display:block;}
+.badge-name{font-size:0.78rem;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.badge-desc{font-size:0.68rem;color:var(--muted);font-weight:600;line-height:1.4;}
+.badge-earned-tag{font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:50px;background:#fffbea;color:#c49a00;margin-top:6px;display:inline-block;}
+.badge-locked-tag{font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:50px;background:var(--light-bg);color:var(--muted);margin-top:6px;display:inline-block;}
+
+/* ── PROFILE ── */
+.profile-top{background:var(--white);border-radius:var(--radius);padding:28px;box-shadow:var(--card-shadow);margin-bottom:20px;display:flex;gap:24px;align-items:flex-start;}
+.profile-avatar-big{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--navy),#2D3580);display:flex;align-items:center;justify-content:center;font-size:3rem;flex-shrink:0;}
+.profile-details{flex:1;}
+.profile-name{font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--navy);margin-bottom:3px;}
+.profile-meta{font-size:0.82rem;color:var(--muted);font-weight:600;margin-bottom:14px;display:flex;gap:16px;flex-wrap:wrap;}
+.profile-tags{display:flex;gap:8px;flex-wrap:wrap;}
+.ptag{background:var(--light-bg);border-radius:50px;padding:5px 14px;font-size:0.75rem;font-weight:800;color:var(--navy);}
+.edit-btn{background:var(--light-bg);border:1.5px solid #e8eaf8;border-radius:12px;padding:9px 18px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;cursor:pointer;color:var(--muted);transition:all 0.2s;flex-shrink:0;}
+.edit-btn:hover{border-color:var(--coral);color:var(--coral);}
+
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.profile-section-card{background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--card-shadow);}
+.psc-title{font-family:'Baloo 2',cursive;font-size:1rem;color:var(--navy);margin-bottom:16px;}
+.info-rows{display:flex;flex-direction:column;gap:12px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid #f0f0f8;}
+.info-row:last-child{border-bottom:none;padding-bottom:0;}
+.ir-label{font-size:0.8rem;color:var(--muted);font-weight:700;}
+.ir-val{font-size:0.85rem;font-weight:800;color:var(--navy);}
+.cert-list{display:flex;flex-direction:column;gap:10px;}
+.cert-item{display:flex;gap:12px;align-items:center;padding:11px 12px;background:var(--light-bg);border-radius:12px;}
+.cert-icon{font-size:1.4rem;flex-shrink:0;}
+.cert-info{flex:1;}
+.cert-name{font-size:0.83rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.cert-date{font-size:0.72rem;color:var(--muted);font-weight:600;}
+.cert-dl{font-size:0.72rem;font-weight:800;color:var(--coral);text-decoration:none;background:#fff0f0;padding:4px 10px;border-radius:50px;flex-shrink:0;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,31,94,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--white);border-radius:24px;padding:36px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 64px rgba(26,31,94,0.25);animation:popIn 0.25s ease both;}
+@keyframes popIn{from{opacity:0;transform:scale(0.9) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-emoji{font-size:4rem;margin-bottom:14px;display:block;}
+.modal-title{font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--navy);margin-bottom:8px;}
+.modal-sub{font-size:0.9rem;color:var(--muted);font-weight:600;line-height:1.65;margin-bottom:24px;}
+.modal-btn{background:var(--coral);color:#fff;border:none;border-radius:50px;padding:12px 28px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;transition:transform 0.18s;}
+.modal-btn:hover{transform:translateY(-2px);}
+
+/* MOBILE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .menu-btn{display:block;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .two-col,.three-col,.profile-grid{grid-template-columns:1fr;}
+  .week-days{grid-template-columns:repeat(7,1fr);}
+  .badges-grid{grid-template-columns:repeat(3,1fr);}
+  .courses-grid{grid-template-columns:1fr;}
+  .profile-top{flex-direction:column;}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .badges-grid{grid-template-columns:repeat(3,1fr);}
+  .content{padding:16px;}
+  .week-days{gap:4px;}
+  .dc-name{font-size:0.55rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html">Leap<span>Kids</span> 🚀</a>
+  </div>
+  <div class="student-info">
+    <div class="student-avatar" id="sideAvatar">😊</div>
+    <div class="student-name" id="sideName">Aarav Sharma</div>
+    <div class="student-grade" id="sideGrade">Class 7 · Bengaluru</div>
+    <div class="xp-bar-wrap">
+      <div class="xp-label"><span>Level 4 — Builder</span><span>720 / 1000 XP</span></div>
+      <div class="xp-bar"><div class="xp-fill" style="width:72%"></div></div>
+    </div>
+  </div>
+
+  <div class="nav-section">Main</div>
+  <a class="nav-item active" onclick="showPage('dashboard',this)"><span class="ni">🏠</span>Dashboard</a>
+  <a class="nav-item" onclick="showPage('courses',this)"><span class="ni">📚</span>My Courses</a>
+  <a class="nav-item" onclick="showPage('schedule',this)"><span class="ni">📅</span>Schedule<span class="nav-badge">2</span></a>
+
+  <div class="nav-section">Progress</div>
+  <a class="nav-item" onclick="showPage('badges',this)"><span class="ni">🏅</span>Badges & Certs</a>
+  <a class="nav-item" onclick="showPage('profile',this)"><span class="ni">👤</span>My Profile</a>
+
+  <div class="sidebar-bottom">
+    <a class="nav-item" href="index.html"><span class="ni">🏫</span>Back to Website</a>
+    <a class="nav-item" onclick="logout()"><span class="ni">🚪</span>Log Out</a>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY for mobile -->
+<div id="overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:199;" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">My Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div id="liveClock" style="font-size:0.78rem;font-weight:700;color:var(--muted);display:none;" class="d-desktop"></div>
+      <div class="streak-pill" style="cursor:pointer;">🔥 12 day streak!</div>
+      <button class="notif-btn" onclick="showModal('notif')">🔔<div class="notif-dot"></div></button>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD ── -->
+  <div class="content active" id="page-dashboard">
+
+    <div class="welcome-banner">
+      <div class="wb-text">
+        <h2>Good morning, Aarav! 👋</h2>
+        <p>You have a Coding class in 2 hours. Your next badge is just 2 lessons away!</p>
+      </div>
+      <button class="wb-cta" onclick="showPage('schedule',document.querySelector('[onclick*=schedule]'))">View Today's Classes</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-val">24</div>
+        <div class="stat-lbl">Hours Learned</div>
+        <div class="stat-delta delta-up">↑ 3 hrs this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-val">18</div>
+        <div class="stat-lbl">Lessons Done</div>
+        <div class="stat-delta delta-up">↑ 4 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-val">7</div>
+        <div class="stat-lbl">Badges Earned</div>
+        <div class="stat-delta delta-up">↑ 1 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-val">12</div>
+        <div class="stat-lbl">Day Streak</div>
+        <div class="stat-delta delta-up">Personal best!</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- NEXT CLASS -->
+      <div>
+        <div class="next-class-card" id="nextClassCard">
+          <div class="nc-tag">Next Class · In 2 hours</div>
+          <div class="nc-title">Python Fundamentals</div>
+          <div class="nc-sub">Module 2 · Lesson 4: Lists & Loops</div>
+          <div class="nc-meta">
+            <div class="nc-meta-item">⏰ 11:00 AM</div>
+            <div class="nc-meta-item">⏱ 60 min</div>
+            <div class="nc-meta-item">👩‍💻 Sneha Ma'am</div>
+          </div>
+          <button class="nc-btn" onclick="showModal('joinClass')">Join Class Room →</button>
+        </div>
+      </div>
+
+      <!-- COURSE PROGRESS -->
+      <div class="card">
+        <div class="card-title">Course Progress <a onclick="showPage('courses',document.querySelector('[onclick*=courses]'))">View all →</a></div>
+        <div class="prog-list">
+          <div class="prog-item">
+            <div class="prog-header"><div class="prog-name">💻 Coding & Python</div><div class="prog-pct">65%</div></div>
+            <div class="prog-bar"><div class="prog-fill pf-coral" style="width:65%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-header"><div class="prog-name">🤖 Robotics & AI</div><div class="prog-pct">40%</div></div>
+            <div class="prog-bar"><div class="prog-fill pf-teal" style="width:40%"></div></div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-header"><div class="prog-name">💰 Financial Literacy</div><div class="prog-pct">80%</div></div>
+            <div class="prog-bar"><div class="prog-fill pf-yellow" style="width:80%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- UPCOMING CLASSES -->
+      <div class="card">
+        <div class="card-title">Upcoming Classes <a onclick="showPage('schedule',document.querySelector('[onclick*=schedule]'))">View schedule →</a></div>
+        <div class="class-list">
+          <div class="class-item">
+            <div class="class-day" style="background:var(--coral);"><div class="class-day-num">10</div><div class="class-day-name">Sat</div></div>
+            <div class="class-info"><div class="class-name">Python — Lists & Loops</div><div class="class-time">11:00 AM · 60 min · Sneha Ma'am</div></div>
+            <div class="class-badge" style="background:#fff0f0;color:var(--coral);">Today</div>
+          </div>
+          <div class="class-item">
+            <div class="class-day" style="background:var(--teal);"><div class="class-day-num">12</div><div class="class-day-name">Mon</div></div>
+            <div class="class-info"><div class="class-name">Robotics — Sensor Basics</div><div class="class-time">4:00 PM · 60 min · Aryan Sir</div></div>
+            <div class="class-badge" style="background:#edfafa;color:#2aaba0;">2 days</div>
+          </div>
+          <div class="class-item">
+            <div class="class-day" style="background:var(--yellow);"><div class="class-day-num">14</div><div class="class-day-name">Wed</div></div>
+            <div class="class-info"><div class="class-name">Finance — Savings Goals</div><div class="class-time">6:00 PM · 45 min · Kavya Ma'am</div></div>
+            <div class="class-badge" style="background:#fffbea;color:#c49a00;">4 days</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="card">
+        <div class="card-title">Recent Activity</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="act-icon" style="background:#e8fff0;">🏅</div>
+            <div class="act-text"><div class="act-title">Earned "Code Starter" badge!</div><div class="act-time">Today, 9:30 AM</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#fff0f0;">✅</div>
+            <div class="act-text"><div class="act-title">Completed Lesson: Functions in Python</div><div class="act-time">Yesterday, 11:15 AM</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#edfafa;">🤖</div>
+            <div class="act-text"><div class="act-title">Submitted Robot Project: Traffic Light</div><div class="act-time">Thu, May 8</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#fffbea;">📈</div>
+            <div class="act-text"><div class="act-title">Finance quiz score: 9/10 — Excellent!</div><div class="act-time">Wed, May 7</div></div>
+          </div>
+          <div class="activity-item">
+            <div class="act-icon" style="background:#f3eeff;">🔥</div>
+            <div class="act-text"><div class="act-title">10-day learning streak achieved!</div><div class="act-time">Mon, May 5</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COURSES ── -->
+  <div class="content" id="page-courses">
+    <div id="courses-list">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--navy);">My Enrolled Courses</div>
+        <a href="programs.html" style="font-size:0.82rem;font-weight:800;color:var(--coral);text-decoration:none;background:#fff0f0;padding:7px 16px;border-radius:50px;">+ Explore More Programs</a>
+      </div>
+      <div class="courses-grid">
+        <!-- CODING -->
+        <div class="course-card" onclick="openCourse('coding')">
+          <div class="course-thumb ct-coral">💻</div>
+          <div class="course-body">
+            <span class="course-tag ct-code">Coding</span>
+            <div class="course-name">Python Fundamentals</div>
+            <div class="course-desc">Learn Python from scratch — variables, loops, functions and build real projects like games and apps.</div>
+            <div class="course-progress-row"><span class="cp-label">Progress</span><span class="cp-pct">65%</span></div>
+            <div class="course-prog-bar"><div class="cpb-fill pf-coral" style="width:65%"></div></div>
+            <div class="course-footer">
+              <div class="course-meta">Lesson 13/20 · Sneha Ma'am</div>
+              <button class="continue-btn" style="background:var(--coral);">Continue →</button>
+            </div>
+          </div>
+        </div>
+        <!-- ROBOTICS -->
+        <div class="course-card" onclick="openCourse('robotics')">
+          <div class="course-thumb ct-teal">🤖</div>
+          <div class="course-body">
+            <span class="course-tag ct-rob">Robotics</span>
+            <div class="course-name">Build Your First Robot</div>
+            <div class="course-desc">Assemble and program a real moving robot — motors, sensors, Arduino and obstacle avoidance!</div>
+            <div class="course-progress-row"><span class="cp-label">Progress</span><span class="cp-pct">40%</span></div>
+            <div class="course-prog-bar"><div class="cpb-fill pf-teal" style="width:40%"></div></div>
+            <div class="course-footer">
+              <div class="course-meta">Lesson 8/20 · Aryan Sir</div>
+              <button class="continue-btn" style="background:var(--teal);">Continue →</button>
+            </div>
+          </div>
+        </div>
+        <!-- FINANCE -->
+        <div class="course-card" onclick="openCourse('finance')">
+          <div class="course-thumb ct-yellow">💰</div>
+          <div class="course-body">
+            <span class="course-tag ct-fin">Finance</span>
+            <div class="course-name">Saving & Budgeting</div>
+            <div class="course-desc">Master your money — set savings goals, create budgets and learn the 50-30-20 rule for kids!</div>
+            <div class="course-progress-row"><span class="cp-label">Progress</span><span class="cp-pct">80%</span></div>
+            <div class="course-prog-bar"><div class="cpb-fill pf-yellow" style="width:80%"></div></div>
+            <div class="course-footer">
+              <div class="course-meta">Lesson 16/20 · Kavya Ma'am</div>
+              <button class="continue-btn" style="background:var(--yellow);color:var(--navy);">Continue →</button>
+            </div>
+          </div>
+        </div>
+        <!-- LOCKED -->
+        <div class="course-card" onclick="showModal('locked')">
+          <div class="course-thumb" style="background:linear-gradient(135deg,#f0f0f8,#e8e8f4);">🌐<span class="course-lock">🔒 Locked</span></div>
+          <div class="course-body">
+            <span class="course-tag" style="background:#f0f0f8;color:var(--muted);">Coding</span>
+            <div class="course-name">Web Development</div>
+            <div class="course-desc">Build real websites with HTML, CSS and JavaScript. Unlocks after completing Python Fundamentals.</div>
+            <div class="course-progress-row"><span class="cp-label">Requirement</span><span class="cp-pct" style="color:var(--muted);">Complete Python first</span></div>
+            <div class="course-prog-bar"><div class="cpb-fill" style="width:0%;background:#e8eaf8"></div></div>
+            <div class="course-footer">
+              <div class="course-meta">20 lessons · Kavya Ma'am</div>
+              <button class="continue-btn" style="background:var(--muted);">Locked 🔒</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LESSON VIEW (hidden by default) -->
+    <div class="lesson-view" id="lessonView">
+      <div class="lesson-header">
+        <button class="back-btn" onclick="closeLessonView()">← Back to Courses</button>
+        <div style="flex:1;">
+          <div style="font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--navy);" id="lvTitle">Python Fundamentals</div>
+          <div style="font-size:0.8rem;color:var(--muted);font-weight:600;" id="lvSub">Module 2 · 13 of 20 lessons completed</div>
+        </div>
+        <div style="text-align:right;min-width:80px;">
+          <div style="font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--coral);" id="lvPct">65%</div>
+          <div style="font-size:0.72rem;color:var(--muted);font-weight:600;">Complete</div>
+          <div style="height:6px;background:#f0f0f8;border-radius:50px;overflow:hidden;margin-top:5px;width:70px;">
+            <div id="lvBar" style="height:100%;width:65%;background:linear-gradient(90deg,var(--coral),var(--orange));border-radius:50px;transition:width 0.8s ease;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="lesson-modules" id="lessonModules"></div>
+    </div>
+  </div>
+
+  <!-- ── SCHEDULE ── -->
+  <div class="content" id="page-schedule">
+    <div class="schedule-header">
+      <div class="week-nav">
+        <button class="week-btn">←</button>
+        <div class="week-label">May 10 – 16, 2025</div>
+        <button class="week-btn">→</button>
+      </div>
+      <div style="font-size:0.82rem;font-weight:700;color:var(--muted);">3 classes this week</div>
+    </div>
+    <div class="week-days">
+      <div class="day-cell"><div class="dc-name">Mon</div><div class="dc-num">10</div><div class="dc-dot hidden"></div></div>
+      <div class="day-cell today"><div class="dc-name">Sat</div><div class="dc-num">10</div><div class="dc-dot"></div></div>
+      <div class="day-cell"><div class="dc-name">Sun</div><div class="dc-num">11</div><div class="dc-dot hidden"></div></div>
+      <div class="day-cell has-class"><div class="dc-name">Mon</div><div class="dc-num">12</div><div class="dc-dot"></div></div>
+      <div class="day-cell"><div class="dc-name">Tue</div><div class="dc-num">13</div><div class="dc-dot hidden"></div></div>
+      <div class="day-cell has-class"><div class="dc-name">Wed</div><div class="dc-num">14</div><div class="dc-dot"></div></div>
+      <div class="day-cell"><div class="dc-name">Thu</div><div class="dc-num">15</div><div class="dc-dot hidden"></div></div>
+    </div>
+    <div class="schedule-list">
+      <div class="schedule-item">
+        <div class="si-time"><div class="si-time-main">11:00</div><div class="si-time-ampm">AM · Today</div></div>
+        <div class="si-line"><div class="si-dot" style="background:var(--coral);"></div></div>
+        <div class="si-card" style="border-left-color:var(--coral);">
+          <div class="si-title">💻 Python Fundamentals — Lists & Loops</div>
+          <div class="si-meta"><span>60 min</span><span>Sneha Ma'am</span><span>Batch A · 6 students</span></div>
+          <button class="si-join" style="background:var(--coral);" onclick="showModal('joinClass')">Join Class Room →</button>
+        </div>
+      </div>
+      <div class="schedule-item">
+        <div class="si-time"><div class="si-time-main">4:00</div><div class="si-time-ampm">PM · Mon</div></div>
+        <div class="si-line"><div class="si-dot" style="background:var(--teal);"></div></div>
+        <div class="si-card" style="border-left-color:var(--teal);">
+          <div class="si-title">🤖 Robotics — IR Sensors & Line Followers</div>
+          <div class="si-meta"><span>60 min</span><span>Aryan Sir</span><span>Batch B · 5 students</span></div>
+          <button class="si-join" style="background:var(--teal);" onclick="showModal('joinClass')">Set Reminder</button>
+        </div>
+      </div>
+      <div class="schedule-item">
+        <div class="si-time"><div class="si-time-main">6:00</div><div class="si-time-ampm">PM · Wed</div></div>
+        <div class="si-line"><div class="si-dot" style="background:#c49a00;"></div></div>
+        <div class="si-card" style="border-left-color:var(--yellow);">
+          <div class="si-title">💰 Finance — Setting Up Your Savings Goal</div>
+          <div class="si-meta"><span>45 min</span><span>Kavya Ma'am</span><span>Batch C · 8 students</span></div>
+          <button class="si-join" style="background:var(--yellow);color:var(--navy);" onclick="showModal('joinClass')">Set Reminder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BADGES ── -->
+  <div class="content" id="page-badges">
+    <div class="badges-hero">
+      <div class="bh-text">
+        <h2>Your Achievements 🏆</h2>
+        <p>Keep learning to unlock more badges and earn your certificates! You're on a roll.</p>
+      </div>
+      <div class="bh-stats">
+        <div class="bhs-item"><div class="bhs-num">7</div><div class="bhs-label">Earned</div></div>
+        <div class="bhs-item"><div class="bhs-num">5</div><div class="bhs-label">Locked</div></div>
+        <div class="bhs-item"><div class="bhs-num">2</div><div class="bhs-label">Certs</div></div>
+      </div>
+    </div>
+
+    <div class="badges-section-title">🌟 Earned Badges</div>
+    <div class="badges-grid">
+      <div class="badge-card earned" onclick="showModal('badge1')"><span class="badge-emoji">🚀</span><div class="badge-name">First Launch</div><div class="badge-desc">Completed first class</div><div class="badge-earned-tag">Earned Apr 1</div></div>
+      <div class="badge-card earned" onclick="showModal('badge2')"><span class="badge-emoji">💻</span><div class="badge-name">Code Starter</div><div class="badge-desc">Wrote first program</div><div class="badge-earned-tag">Earned Apr 5</div></div>
+      <div class="badge-card earned" onclick="showModal('badge2')"><span class="badge-emoji">🤖</span><div class="badge-name">Bot Builder</div><div class="badge-desc">Assembled first robot</div><div class="badge-earned-tag">Earned Apr 12</div></div>
+      <div class="badge-card earned" onclick="showModal('badge2')"><span class="badge-emoji">💰</span><div class="badge-name">Money Wise</div><div class="badge-desc">Finished Finance M1</div><div class="badge-earned-tag">Earned Apr 18</div></div>
+      <div class="badge-card earned" onclick="showModal('badge2')"><span class="badge-emoji">🎮</span><div class="badge-name">Game Creator</div><div class="badge-desc">Built first game</div><div class="badge-earned-tag">Earned Apr 25</div></div>
+      <div class="badge-card earned" onclick="showModal('badge2')"><span class="badge-emoji">🔥</span><div class="badge-name">On Fire!</div><div class="badge-desc">10-day streak</div><div class="badge-earned-tag">Earned May 5</div></div>
+      <div class="badge-card earned" onclick="showModal('badge2')"><span class="badge-emoji">⭐</span><div class="badge-name">Quiz Champ</div><div class="badge-desc">9/10 in Finance quiz</div><div class="badge-earned-tag">Earned May 7</div></div>
+    </div>
+
+    <div class="badges-section-title">🔒 Badges to Unlock</div>
+    <div class="badges-grid">
+      <div class="badge-card locked"><span class="badge-emoji">🌐</span><div class="badge-name">Web Wizard</div><div class="badge-desc">Launch your first website</div><div class="badge-locked-tag">Complete Python first</div></div>
+      <div class="badge-card locked"><span class="badge-emoji">🧠</span><div class="badge-name">AI Explorer</div><div class="badge-desc">Complete AI basics</div><div class="badge-locked-tag">Robotics Module 4</div></div>
+      <div class="badge-card locked"><span class="badge-emoji">📈</span><div class="badge-name">Stock Star</div><div class="badge-desc">Complete investing module</div><div class="badge-locked-tag">Finance Module 3</div></div>
+      <div class="badge-card locked"><span class="badge-emoji">🏪</span><div class="badge-name">Entrepreneur</div><div class="badge-desc">Complete business module</div><div class="badge-locked-tag">Finance Module 4</div></div>
+      <div class="badge-card locked"><span class="badge-emoji">🏆</span><div class="badge-name">Top Achiever</div><div class="badge-desc">Score 95%+ in assessment</div><div class="badge-locked-tag">Next assessment</div></div>
+    </div>
+
+    <div class="badges-section-title">📜 My Certificates</div>
+    <div class="cert-list" style="max-width:560px;">
+      <div class="cert-item"><div class="cert-icon">📜</div><div class="cert-info"><div class="cert-name">Financial Literacy — Module 1 Certificate</div><div class="cert-date">Issued April 20, 2025 · LeapKids</div></div><a href="#" class="cert-dl">Download</a></div>
+      <div class="cert-item"><div class="cert-icon">📜</div><div class="cert-info"><div class="cert-name">Scratch Coding — Beginner Certificate</div><div class="cert-date">Issued March 15, 2025 · LeapKids</div></div><a href="#" class="cert-dl">Download</a></div>
+    </div>
+  </div>
+
+  <!-- ── PROFILE ── -->
+  <div class="content" id="page-profile">
+    <div class="profile-top">
+      <div class="profile-avatar-big" id="profileAvatar">😊</div>
+      <div class="profile-details">
+        <div class="profile-name" id="profileName">Aarav Sharma</div>
+        <div class="profile-meta">
+          <span>🎂 12 years old</span>
+          <span>🏫 Class 7 · DPS Bengaluru</span>
+          <span>📅 Joined March 2025</span>
+          <span>🆔 LK-2025-00421</span>
+        </div>
+        <div class="profile-tags">
+          <span class="ptag">💻 Coding</span>
+          <span class="ptag">🤖 Robotics</span>
+          <span class="ptag">💰 Finance</span>
+          <span class="ptag">🔥 12-day streak</span>
+          <span class="ptag">Level 4 — Builder</span>
+        </div>
+      </div>
+      <button class="edit-btn">Edit Profile</button>
+    </div>
+    <div class="profile-grid">
+      <div class="profile-section-card">
+        <div class="psc-title">Personal Details</div>
+        <div class="info-rows">
+          <div class="info-row"><span class="ir-label">Full Name</span><span class="ir-val" id="pName">Aarav Sharma</span></div>
+          <div class="info-row"><span class="ir-label">Age</span><span class="ir-val">12 years</span></div>
+          <div class="info-row"><span class="ir-label">Grade</span><span class="ir-val">Class 7</span></div>
+          <div class="info-row"><span class="ir-label">School</span><span class="ir-val">DPS Bengaluru</span></div>
+          <div class="info-row"><span class="ir-label">City</span><span class="ir-val">Bengaluru</span></div>
+          <div class="info-row"><span class="ir-label">Parent's Name</span><span class="ir-val">Priya Sharma</span></div>
+          <div class="info-row"><span class="ir-label">Parent's Phone</span><span class="ir-val">98765 43210</span></div>
+          <div class="info-row"><span class="ir-label">Language</span><span class="ir-val">English</span></div>
+        </div>
+      </div>
+      <div class="profile-section-card">
+        <div class="psc-title">Learning Stats</div>
+        <div class="info-rows">
+          <div class="info-row"><span class="ir-label">Total XP</span><span class="ir-val" style="color:var(--orange);">720 XP</span></div>
+          <div class="info-row"><span class="ir-label">Level</span><span class="ir-val">Level 4 — Builder</span></div>
+          <div class="info-row"><span class="ir-label">Current Streak</span><span class="ir-val" style="color:var(--coral);">🔥 12 days</span></div>
+          <div class="info-row"><span class="ir-label">Best Streak</span><span class="ir-val">12 days</span></div>
+          <div class="info-row"><span class="ir-label">Hours Learned</span><span class="ir-val">24 hrs</span></div>
+          <div class="info-row"><span class="ir-label">Lessons Completed</span><span class="ir-val">18 / 60</span></div>
+          <div class="info-row"><span class="ir-label">Badges Earned</span><span class="ir-val">7 / 12</span></div>
+          <div class="info-row"><span class="ir-label">Certificates</span><span class="ir-val">2</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modalBox">
+    <span class="modal-emoji" id="modalEmoji">🚀</span>
+    <div class="modal-title" id="modalTitle">Title</div>
+    <div class="modal-sub" id="modalSub">Sub</div>
+    <button class="modal-btn" id="modalBtn" onclick="closeModal()">Got it!</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  LEAPKIDS — STUDENT DASHBOARD
+// ═══════════════════════════════════════════════════════
+
+// ── 1. LOAD STUDENT FROM localStorage (set by login.html) ──
+const STUDENT = {
+  name:   localStorage.getItem('lk_name')   || 'Aarav Sharma',
+  avatar: localStorage.getItem('lk_avatar') || '😊',
+  grade:  localStorage.getItem('lk_grade')  || 'Class 7 · Bengaluru'
+};
+
+// Apply across UI
+document.getElementById('sideName').textContent      = STUDENT.name;
+document.getElementById('sideGrade').textContent     = STUDENT.grade;
+document.getElementById('sideAvatar').textContent    = STUDENT.avatar;
+document.getElementById('profileName').textContent   = STUDENT.name;
+document.getElementById('pName').textContent         = STUDENT.name;
+document.getElementById('profileAvatar').textContent = STUDENT.avatar;
+
+// Personalised greeting by time of day
+const hr = new Date().getHours();
+const greet = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
+document.querySelector('.wb-text h2').textContent = greet + ', ' + STUDENT.name.split(' ')[0] + '! 👋';
+
+// ── 2. LIVE CLOCK in topbar ──
+function updateClock() {
+  const now = new Date();
+  const t = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const d = now.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+  const el = document.getElementById('liveClock');
+  if (el) el.textContent = d + ' · ' + t;
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// ── 3. ANIMATE XP BAR on load ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const fill = document.querySelector('.xp-fill');
+    if (fill) { fill.style.width = '0%'; setTimeout(() => fill.style.width = '72%', 100); }
+    // also animate stat-cards
+    document.querySelectorAll('.prog-fill, .cpb-fill').forEach(el => {
+      const w = el.style.width; el.style.width = '0%';
+      setTimeout(() => el.style.width = w, 400);
+    });
+  }, 200);
+});
+
+// ── 4. PAGE NAVIGATION ──
+function showPage(id, el) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+  const titles = {
+    dashboard: 'My Dashboard', courses: 'My Courses',
+    schedule: 'My Schedule',   badges: 'Badges & Certificates',
+    profile: 'My Profile'
+  };
+  document.getElementById('pageTitle').textContent = titles[id] || 'LeapKids';
+  closeSidebar();
+  if (id === 'courses') {
+    document.getElementById('lessonView').classList.remove('show');
+    document.getElementById('courses-list').style.display = '';
+  }
+}
+
+// ── 5. MOBILE SIDEBAR ──
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('overlay');
+  sb.classList.toggle('open');
+  ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').style.display = 'none';
+}
+
+// ── 6. MODALS ──
+const MODALS = {
+  joinClass: {
+    emoji:'🖥️', title:'Joining Class Room!',
+    sub: 'Opening your live Coding class with Sneha Ma\'am. Make sure your mic and camera are ready. You\'ve got this! 💪',
+    btn: 'Open Class Room', action: () => alert('In the live version this opens your Zoom / Google Meet class link!')
+  },
+  notif: {
+    emoji:'🔔', title:'Notifications',
+    sub: '• 🟠 Coding class today at 11:00 AM — get ready!\n• 🏅 New badge "Quiz Champ" earned yesterday!\n• ▶ Finance lesson recording is now available.\n• 📅 Robotics class on Monday at 4:00 PM.',
+    btn: 'Mark all as read'
+  },
+  locked: {
+    emoji:'🔒', title:'Course Locked 🔒',
+    sub: 'Complete Python Fundamentals first to unlock Web Development. You\'re 65% done — just 7 more lessons to go! Keep it up! 🚀',
+    btn: 'Continue Python →', action: () => openCourse('coding')
+  },
+  badge1: {
+    emoji:'🚀', title:'First Launch Badge!',
+    sub: 'Earned on April 1, 2025\n\nYou completed your very first LeapKids class! This is where every great developer, robotics engineer and entrepreneur starts. 🌟',
+    btn: 'Awesome!'
+  },
+  badge2: {
+    emoji:'🏅', title:'Badge Earned!',
+    sub: 'You hit a key milestone in your learning journey. Keep pushing — your next badge is just around the corner!',
+    btn: 'Keep Learning! 💪'
+  },
+  lessonPlay: {
+    emoji:'▶️', title:'', sub:'', btn:'Mark as Complete ✅',
+    action: () => { closeModal(); showModal('lessonDone'); }
+  },
+  lessonDone: {
+    emoji:'✅', title:'Lesson Complete! 🎉',
+    sub: 'Great work! You\'ve finished this lesson. Your progress has been saved. Keep going — your next badge is getting closer! 🏅',
+    btn: 'Next Lesson →'
+  },
+  streak: {
+    emoji:'🔥', title:'12-Day Streak! 🔥',
+    sub: 'You\'ve been learning every day for 12 days straight — that\'s a new personal best! Consistency is the secret to becoming great. Don\'t break the chain!',
+    btn: 'Let\'s Keep Going! 💪'
+  },
+  certDownload: {
+    emoji:'📜', title:'Downloading Certificate',
+    sub: 'Your LeapKids certificate is being prepared. In the full version this downloads a beautiful PDF certificate you can share with your school and family!',
+    btn: 'Got it!'
+  }
+};
+
+function showModal(type) {
+  const m = MODALS[type];
+  if (!m) return;
+  document.getElementById('modalEmoji').textContent  = m.emoji;
+  document.getElementById('modalTitle').textContent  = m.title;
+  document.getElementById('modalSub').style.whiteSpace = 'pre-line';
+  document.getElementById('modalSub').textContent    = m.sub;
+  document.getElementById('modalBtn').textContent    = m.btn;
+  document.getElementById('modalBtn').onclick        = m.action || closeModal;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+}
+// Escape key closes modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── 7. COURSES DATA ──
+const courseData = {
+  coding: {
+    title: 'Coding — Python Fundamentals', sub: 'Module 2 · 13 of 20 lessons completed',
+    progress: 65, color: 'var(--coral)', tag: 'Coding',
+    modules: [
+      { icon:'🎨', title:'Module 1: Scratch & Block Coding', sub:'4 / 4 lessons complete', status:'done', color:'#6BCB77',
+        lessons:[{t:'Intro to Scratch',d:'20 min',done:true},{t:'Sprites, Stages & Backdrops',d:'25 min',done:true},{t:'Loops, Events & Control',d:'30 min',done:true},{t:'Space Adventure Game Project',d:'45 min',done:true}]},
+      { icon:'🐍', title:'Module 2: Python Fundamentals', sub:'9 of 10 lessons · In Progress', status:'active', color:'var(--coral)',
+        lessons:[{t:'Python setup & first print()',d:'20 min',done:true},{t:'Variables & data types',d:'25 min',done:true},{t:'Input & output operations',d:'20 min',done:true},{t:'Operators & expressions',d:'25 min',done:true},{t:'If / else conditions',d:'30 min',done:true},{t:'For loops',d:'30 min',done:true},{t:'While loops',d:'30 min',done:true},{t:'Functions & scope',d:'35 min',done:true},{t:'Lists & Dictionaries — UP NEXT 🎯',d:'60 min',done:false},{t:'Module Project: Snake Game',d:'90 min',done:false}]},
+      { icon:'🌐', title:'Module 3: Web Development', sub:'Locked — complete Module 2 first', status:'locked', color:'var(--muted)', lessons:[]},
+      { icon:'📱', title:'Module 4: App Development', sub:'Locked', status:'locked', color:'var(--muted)', lessons:[]}
+    ]
+  },
+  robotics: {
+    title: 'Robotics — Build Your First Robot', sub: 'Module 2 · 8 of 20 lessons completed',
+    progress: 40, color: 'var(--teal)', tag: 'Robotics',
+    modules: [
+      { icon:'⚡', title:'Module 1: Electronics & Circuits', sub:'5 / 5 lessons complete', status:'done', color:'#6BCB77',
+        lessons:[{t:'What is electricity & voltage',d:'20 min',done:true},{t:'Breadboards, LEDs & resistors',d:'30 min',done:true},{t:'Series & parallel circuits',d:'25 min',done:true},{t:'Arduino intro & first sketch',d:'35 min',done:true},{t:'Traffic Light Controller project',d:'60 min',done:true}]},
+      { icon:'🤖', title:'Module 2: Build Your First Robot', sub:'3 of 10 lessons · In Progress', status:'active', color:'var(--teal)',
+        lessons:[{t:'Motors, wheels & chassis assembly',d:'45 min',done:true},{t:'H-Bridge motor driver wiring',d:'30 min',done:true},{t:'Move forward, backward & turn',d:'30 min',done:true},{t:'IR Sensors — UP NEXT 🎯',d:'60 min',done:false},{t:'Line-following logic & code',d:'60 min',done:false},{t:'Obstacle avoidance',d:'60 min',done:false},{t:'Bluetooth remote control',d:'45 min',done:false},{t:'Robot calibration & tuning',d:'30 min',done:false},{t:'Full test run & debugging',d:'45 min',done:false},{t:'Module Project: Line-Following Robot',d:'90 min',done:false}]},
+      { icon:'📡', title:'Module 3: IoT & Smart Systems', sub:'Locked', status:'locked', color:'var(--muted)', lessons:[]},
+      { icon:'🧠', title:'Module 4: AI & Computer Vision', sub:'Locked', status:'locked', color:'var(--muted)', lessons:[]}
+    ]
+  },
+  finance: {
+    title: 'Financial Literacy — Saving & Budgeting', sub: 'Module 2 · 16 of 20 lessons completed',
+    progress: 80, color: 'var(--yellow)', tag: 'Finance',
+    modules: [
+      { icon:'🪙', title:'Module 1: Money Basics & Banking', sub:'8 / 8 lessons complete', status:'done', color:'#6BCB77',
+        lessons:[{t:'What is money & barter history',d:'20 min',done:true},{t:'Types of money & digital payments',d:'20 min',done:true},{t:'How banks earn & pay interest',d:'25 min',done:true},{t:'Savings accounts & FDs',d:'20 min',done:true},{t:'Needs vs wants game',d:'25 min',done:true},{t:'UPI, cards & digital money',d:'20 min',done:true},{t:'India\'s currency history',d:'15 min',done:true},{t:'Module 1 Quiz & Project',d:'30 min',done:true}]},
+      { icon:'🐷', title:'Module 2: Saving & Budgeting', sub:'8 of 10 lessons · In Progress', status:'active', color:'#c49a00',
+        lessons:[{t:'The 50-30-20 rule for kids',d:'25 min',done:true},{t:'Setting SMART savings goals',d:'30 min',done:true},{t:'Tracking your daily spending',d:'25 min',done:true},{t:'Smart vs impulse buying',d:'20 min',done:true},{t:'Comparing prices & value',d:'20 min',done:true},{t:'Emergency fund basics',d:'20 min',done:true},{t:'30-day savings challenge intro',d:'15 min',done:true},{t:'Mid-module quiz: 9/10 🎉',d:'20 min',done:true},{t:'Savings Goal Worksheet — UP NEXT 🎯',d:'30 min',done:false},{t:'Module 2 Final Project: Budget Tracker',d:'60 min',done:false}]},
+      { icon:'📈', title:'Module 3: Investing Basics', sub:'Almost unlocked — finish Module 2!', status:'locked', color:'var(--muted)', lessons:[]},
+      { icon:'🏪', title:'Module 4: Entrepreneurship', sub:'Locked', status:'locked', color:'var(--muted)', lessons:[]}
+    ]
+  }
+};
+
+// ── 8. OPEN COURSE → LESSON VIEW ──
+function openCourse(key) {
+  const d = courseData[key];
+  if (!d) return;
+  document.getElementById('courses-list').style.display = 'none';
+  document.getElementById('lvTitle').textContent   = d.title;
+  document.getElementById('lvSub').textContent     = d.sub;
+  document.getElementById('lvPct').textContent     = d.progress + '%';
+  document.getElementById('lvBar').style.width     = d.progress + '%';
+  document.getElementById('lvBar').style.background = d.color === 'var(--yellow)' ? 'linear-gradient(90deg,var(--yellow),var(--orange))' : d.color === 'var(--teal)' ? 'linear-gradient(90deg,var(--teal),#2aaba0)' : 'linear-gradient(90deg,var(--coral),var(--orange))';
+  const container = document.getElementById('lessonModules');
+  container.innerHTML = '';
+  d.modules.forEach((mod, mi) => {
+    const statusClass = {done:'ls-done', active:'ls-active', locked:'ls-locked'}[mod.status];
+    const statusText  = {done:'✅ Completed', active:'▶ In Progress', locked:'🔒 Locked'}[mod.status];
+    const bgColor = {done:'#e8fff0', active:'#fff0f0', locked:'#f0f0f8'}[mod.status];
+    const lessonsHtml = mod.lessons.map((l, li) => `
+      <div class="lesson-item ${l.done?'done':''}" onclick="${mod.status!=='locked'?`playLesson('${l.t}','${l.d}',${l.done})`:''}">
+        <div class="li-dot" style="background:${l.done?'#6BCB77':mod.status==='locked'?'#e8eaf8':d.color};color:#fff;font-size:0.7rem;font-weight:800;">
+          ${l.done ? '✓' : mod.status==='locked' ? '🔒' : '▶'}
+        </div>
+        <div class="li-title">${l.t}</div>
+        <div class="li-dur">${l.d}</div>
+        ${!l.done && mod.status==='active' && mod.lessons.filter(x=>!x.done)[0]===l ? '<span style="font-size:0.65rem;font-weight:800;background:#fff0f0;color:var(--coral);padding:2px 8px;border-radius:50px;white-space:nowrap;">Next</span>' : ''}
+      </div>`).join('');
+    const isFirstActive = mi === d.modules.findIndex(m => m.status === 'active');
+    const card = document.createElement('div');
+    card.className = 'lesson-module';
+    card.innerHTML = `
+      <div class="lm-header" onclick="toggleModule(this)">
+        <div class="lm-icon" style="background:${bgColor};">${mod.icon}</div>
+        <div class="lm-info">
+          <div class="lm-title">${mod.title}</div>
+          <div class="lm-sub">${mod.sub}</div>
+        </div>
+        <div class="lm-status ${statusClass}">${statusText}</div>
+        <div class="lm-arrow" style="margin-left:8px;font-size:0.85rem;color:var(--muted);transition:transform 0.3s;">▼</div>
+      </div>
+      <div class="lm-body ${isFirstActive?'open':''}">
+        ${mod.lessons.length
+          ? `<div class="lesson-list">${lessonsHtml}</div>`
+          : `<div style="font-size:0.85rem;color:var(--muted);font-weight:600;padding:6px 0;">Complete the previous module to unlock these lessons.</div>`}
+      </div>`;
+    container.appendChild(card);
+    if (isFirstActive) card.querySelector('.lm-arrow').style.transform = 'rotate(180deg)';
+  });
+  document.getElementById('lessonView').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeLessonView() {
+  document.getElementById('lessonView').classList.remove('show');
+  document.getElementById('courses-list').style.display = '';
+}
+
+function toggleModule(header) {
+  const body  = header.nextElementSibling;
+  const arrow = header.querySelector('.lm-arrow');
+  const open  = body.classList.contains('open');
+  document.querySelectorAll('.lm-body').forEach(b  => b.classList.remove('open'));
+  document.querySelectorAll('.lm-arrow').forEach(a => a.style.transform = '');
+  if (!open) { body.classList.add('open'); arrow.style.transform = 'rotate(180deg)'; }
+}
+
+function playLesson(title, duration, isDone) {
+  MODALS.lessonPlay.title = isDone ? '📖 ' + title : '▶ ' + title;
+  MODALS.lessonPlay.sub   = isDone
+    ? `Duration: ${duration}\n\nYou've already completed this lesson! You can replay it anytime to review. 📚`
+    : `Duration: ${duration}\n\nIn the live version this opens your recorded or live lesson video. Your mentor's explanation, exercises and projects will be right here! 🎯`;
+  MODALS.lessonPlay.btn    = isDone ? 'Close' : 'Mark as Complete ✅';
+  MODALS.lessonPlay.action = isDone ? closeModal : () => { closeModal(); setTimeout(() => showModal('lessonDone'), 300); };
+  showModal('lessonPlay');
+}
+
+// ── 9. LOGOUT ──
+function logout() {
+  localStorage.removeItem('lk_name');
+  localStorage.removeItem('lk_avatar');
+  localStorage.removeItem('lk_grade');
+  localStorage.removeItem('lk_role');
+  window.location.href = 'login.html';
+}
+
+// ── 10. CERT DOWNLOAD INTERCEPT ──
+document.querySelectorAll('.cert-dl').forEach(el => {
+  el.addEventListener('click', e => { e.preventDefault(); showModal('certDownload'); });
+});
+
+// ── 11. STREAK CLICK ──
+document.querySelector('.streak-pill').addEventListener('click', () => showModal('streak'));
+</script>
+</body>
+</html>

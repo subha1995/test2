@@ -509,13 +509,50 @@ function selectAvatar(el) {
 }
 
 function handleLogin(role) {
-  const messages = {
-    parent: { emoji: '👋', title: 'Welcome back, Parent!', msg: 'You\'re now logged in. Access your child\'s progress, upcoming classes and more from your dashboard.', btn: 'Go to Parent Dashboard →' },
-    student: { emoji: '🚀', title: 'Hey there, Superstar! 🌟', msg: 'You\'re logged in and ready to learn! Your next class is waiting. Let\'s go build something amazing!', btn: 'Go to My Classes →' },
-    school: { emoji: '🏫', title: 'School Portal Access Granted!', msg: 'You\'re now in the LeapKids school dashboard. View student rosters, schedules and performance reports.', btn: 'Open School Dashboard →' }
-  };
-  const m = messages[role];
-  showSuccess(m.emoji, m.title, m.msg, m.btn);
+  if (role === 'student') {
+    // ── Grab avatar & name from the student login form ──
+    const idInput  = document.querySelector('#student-login input[type="text"]');
+    const avatar   = document.querySelector('#student-login .av-btn.selected')?.textContent || '😊';
+    const rawId    = idInput?.value.trim() || '';
+
+    // Derive a friendly display name from whatever they typed (ID or email)
+    let displayName = rawId;
+    if (rawId.includes('@')) {
+      displayName = rawId.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    } else if (!rawId) {
+      displayName = 'Student';
+    }
+
+    // ── Save to localStorage so dashboard can read it ──
+    localStorage.setItem('lk_name',   displayName);
+    localStorage.setItem('lk_avatar', avatar);
+    localStorage.setItem('lk_grade',  'LeapKids Student');
+    localStorage.setItem('lk_role',   'student');
+
+    // ── Show brief success then redirect ──
+    showSuccess('🚀','Hey there, Superstar! 🌟',
+      'Logging you in… Taking you to your Learning Dashboard now!',
+      '🎮 Go to My Dashboard →');
+
+    // Redirect after 1.8 s
+    setTimeout(() => { window.location.href = 'student-dashboard.html'; }, 1800);
+
+  } else if (role === 'parent') {
+    // Save role so parent dashboard can be added later
+    localStorage.setItem('lk_role', 'parent');
+    showSuccess('👋','Welcome back, Parent!',
+      'You\'re now logged in. Access your child\'s progress, upcoming classes and certificates from your dashboard.',
+      'Go to Parent Dashboard →');
+    // Parent dashboard coming soon — for now stays on success screen
+    document.getElementById('dashboardBtn').onclick = () => { window.location.href = 'index.html'; };
+
+  } else if (role === 'school') {
+    localStorage.setItem('lk_role', 'school');
+    showSuccess('🏫','School Portal Access Granted!',
+      'You\'re now in the LeapKids school admin portal. View student rosters, schedules and performance reports.',
+      'Open School Dashboard →');
+    document.getElementById('dashboardBtn').onclick = () => { window.location.href = 'index.html'; };
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -588,11 +625,25 @@ async function handleSignup(role) {
     // ── Success ──
     const successMap = {
       parent:  { emoji: '🎉', title: 'Account Created!',          msg: 'Welcome to LeapKids! Our team will contact you shortly. Book your child\'s first FREE class now.', btn: 'Book FREE Trial Class →' },
-      student: { emoji: '🌟', title: 'You\'re a LeapKid now! 🚀', msg: 'Amazing! Your account is being set up. Your parent will receive a confirmation call shortly.',    btn: 'See My Dashboard →'      },
+      student: { emoji: '🌟', title: 'You\'re a LeapKid now! 🚀', msg: 'Amazing! Setting up your Learning Dashboard now…',    btn: '🎮 Go to My Dashboard →'      },
       school:  { emoji: '🏫', title: 'School Registered!',         msg: 'Our school partnership team will call you within 24 hours to set up your institution portal.',    btn: 'Back to Home →'          }
     };
     const m = successMap[role];
-    showSuccess(m.emoji, m.title, m.msg, m.btn);
+
+    // If student signup — save data & redirect to dashboard
+    if (role === 'student') {
+      const firstName = document.querySelector('#student-signup input[placeholder="Aarav"]')?.value.trim() || 'Student';
+      const avatar    = document.querySelector('#student-signup .av-btn.selected')?.textContent || '😊';
+      const age       = document.querySelector('#student-signup select')?.value || '';
+      localStorage.setItem('lk_name',   firstName);
+      localStorage.setItem('lk_avatar', avatar);
+      localStorage.setItem('lk_grade',  age ? 'Age ' + age + ' · LeapKids Student' : 'LeapKids Student');
+      localStorage.setItem('lk_role',   'student');
+      showSuccess(m.emoji, m.title, m.msg, m.btn);
+      setTimeout(() => { window.location.href = 'student-dashboard.html'; }, 1800);
+    } else {
+      showSuccess(m.emoji, m.title, m.msg, m.btn);
+    }
 
   } catch (err) {
     alert('Network error. Please check your internet and try again.');
