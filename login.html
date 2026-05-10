@@ -448,7 +448,7 @@ footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:32px 5vw;posi
         <span class="success-icon" id="successEmoji">🎉</span>
         <h3 id="successTitle">Welcome back!</h3>
         <p id="successMsg">You're all set! Redirecting you to your dashboard...</p>
-        <a href="index.html" class="dashboard-btn" id="dashboardBtn">Go to Dashboard →</a>
+        <button class="dashboard-btn" id="dashboardBtn">Go to Dashboard →</button>
         <p style="margin-top:14px;font-size:0.78rem;color:var(--muted);font-weight:600;">Don't have a class yet? <a href="book-demo.html" style="color:var(--coral);font-weight:800;">Book your FREE trial →</a></p>
       </div>
 
@@ -510,48 +510,43 @@ function selectAvatar(el) {
 
 function handleLogin(role) {
   if (role === 'student') {
-    // ── Grab avatar & name from the student login form ──
-    const idInput  = document.querySelector('#student-login input[type="text"]');
-    const avatar   = document.querySelector('#student-login .av-btn.selected')?.textContent || '😊';
-    const rawId    = idInput?.value.trim() || '';
+    const idInput   = document.querySelector('#student-login input[type="text"]');
+    const avatar    = document.querySelector('#student-login .av-btn.selected')?.textContent || '😊';
+    const rawId     = idInput?.value.trim() || '';
 
-    // Derive a friendly display name from whatever they typed (ID or email)
+    // Turn email or ID into a readable name
     let displayName = rawId;
     if (rawId.includes('@')) {
-      displayName = rawId.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+      displayName = rawId.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
     } else if (!rawId) {
       displayName = 'Student';
     }
 
-    // ── Save to localStorage so dashboard can read it ──
+    // Save everything to localStorage — dashboard reads these
     localStorage.setItem('lk_name',   displayName);
     localStorage.setItem('lk_avatar', avatar);
     localStorage.setItem('lk_grade',  'LeapKids Student');
     localStorage.setItem('lk_role',   'student');
 
-    // ── Show brief success then redirect ──
-    showSuccess('🚀','Hey there, Superstar! 🌟',
-      'Logging you in… Taking you to your Learning Dashboard now!',
-      '🎮 Go to My Dashboard →');
-
-    // Redirect after 1.8 s
-    setTimeout(() => { window.location.href = 'student-dashboard.html'; }, 1800);
+    // Show success and wire the button directly to the dashboard
+    showSuccess(
+      '🚀', 'Hey there, Superstar! 🌟',
+      'You\'re logged in! Tap the button below to open your Learning Dashboard.',
+      '🎮 Go to My Dashboard →',
+      'student-dashboard.html'
+    );
 
   } else if (role === 'parent') {
-    // Save role so parent dashboard can be added later
     localStorage.setItem('lk_role', 'parent');
     showSuccess('👋','Welcome back, Parent!',
-      'You\'re now logged in. Access your child\'s progress, upcoming classes and certificates from your dashboard.',
-      'Go to Parent Dashboard →');
-    // Parent dashboard coming soon — for now stays on success screen
-    document.getElementById('dashboardBtn').onclick = () => { window.location.href = 'index.html'; };
+      'You\'re now logged in. Your child\'s progress, classes and certificates are ready.',
+      'Go to Home →', 'index.html');
 
   } else if (role === 'school') {
     localStorage.setItem('lk_role', 'school');
     showSuccess('🏫','School Portal Access Granted!',
-      'You\'re now in the LeapKids school admin portal. View student rosters, schedules and performance reports.',
-      'Open School Dashboard →');
-    document.getElementById('dashboardBtn').onclick = () => { window.location.href = 'index.html'; };
+      'You\'re now in the LeapKids school admin portal. View rosters, schedules and reports.',
+      'Go to Home →', 'index.html');
   }
 }
 
@@ -630,7 +625,7 @@ async function handleSignup(role) {
     };
     const m = successMap[role];
 
-    // If student signup — save data & redirect to dashboard
+    // If student signup — save data then go to dashboard
     if (role === 'student') {
       const firstName = document.querySelector('#student-signup input[placeholder="Aarav"]')?.value.trim() || 'Student';
       const avatar    = document.querySelector('#student-signup .av-btn.selected')?.textContent || '😊';
@@ -639,10 +634,9 @@ async function handleSignup(role) {
       localStorage.setItem('lk_avatar', avatar);
       localStorage.setItem('lk_grade',  age ? 'Age ' + age + ' · LeapKids Student' : 'LeapKids Student');
       localStorage.setItem('lk_role',   'student');
-      showSuccess(m.emoji, m.title, m.msg, m.btn);
-      setTimeout(() => { window.location.href = 'student-dashboard.html'; }, 1800);
+      showSuccess(m.emoji, m.title, m.msg, m.btn, 'student-dashboard.html');
     } else {
-      showSuccess(m.emoji, m.title, m.msg, m.btn);
+      showSuccess(m.emoji, m.title, m.msg, m.btn, 'index.html');
     }
 
   } catch (err) {
@@ -651,14 +645,16 @@ async function handleSignup(role) {
   }
 }
 
-function showSuccess(emoji, title, msg, btnText) {
+function showSuccess(emoji, title, msg, btnText, redirectURL) {
   document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-  const overlay = document.getElementById('successOverlay');
   document.getElementById('successEmoji').textContent = emoji;
   document.getElementById('successTitle').textContent = title;
-  document.getElementById('successMsg').textContent = msg;
-  document.getElementById('dashboardBtn').textContent = btnText;
-  overlay.classList.add('show');
+  document.getElementById('successMsg').textContent   = msg;
+  const btn = document.getElementById('dashboardBtn');
+  btn.textContent = btnText;
+  // Wire the button directly — no setTimeout, no href confusion
+  btn.onclick = () => { window.location.href = redirectURL || 'index.html'; };
+  document.getElementById('successOverlay').classList.add('show');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
