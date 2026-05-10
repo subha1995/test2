@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login / Sign Up — LeapKids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--yellow:#FFD93D;--coral:#FF6B6B;--teal:#4ECDC4;--navy:#1A1F5E;--purple:#7C5CBF;--green:#6BCB77;--orange:#FF8E53;--white:#FFFFFF;--light-bg:#F8F9FF;--text:#2D2D44;--muted:#6B7280;--card-shadow:0 8px 40px rgba(26,31,94,0.13);--radius:24px;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--light-bg);overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(26,31,94,0.035) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:var(--white);box-shadow:0 2px 20px rgba(26,31,94,0.08);position:sticky;top:0;z-index:1000;}
+.logo{font-family:'Baloo 2',cursive;font-size:1.75rem;color:var(--navy);text-decoration:none;}.logo span{color:var(--coral);}
+.nav-links{display:flex;gap:20px;list-style:none;align-items:center;}
+.nav-links a{text-decoration:none;color:var(--text);font-weight:700;font-size:0.88rem;transition:color 0.2s;}
+.nav-links a:hover{color:var(--coral);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.hamburger span{width:24px;height:3px;background:var(--navy);border-radius:3px;display:block;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--white);padding:20px 5vw 28px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;flex-direction:column;gap:2px;}
+.mobile-menu a{text-decoration:none;color:var(--text);font-weight:700;font-size:1rem;padding:12px 0;border-bottom:1px solid #f0f0f4;display:block;}
+.mobile-menu.open{display:flex;}
+
+/* LAYOUT */
+.page-wrap{display:flex;min-height:calc(100vh - 64px);}
+
+/* LEFT PANEL */
+.left-panel{width:440px;flex-shrink:0;background:linear-gradient(160deg,var(--navy) 0%,#2A3080 100%);padding:56px 44px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.left-panel::before{content:'🚀';position:absolute;font-size:18rem;opacity:0.04;bottom:-60px;right:-40px;pointer-events:none;}
+.left-deco-dots{position:absolute;top:30px;right:30px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.left-deco-dots span{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.12);display:block;}
+
+.left-logo{font-family:'Baloo 2',cursive;font-size:1.6rem;color:#fff;text-decoration:none;display:block;margin-bottom:44px;}
+.left-logo span{color:var(--coral);}
+
+.left-panel h2{font-family:'Baloo 2',cursive;font-size:2rem;color:#fff;line-height:1.2;margin-bottom:12px;}
+.left-panel h2 em{color:var(--yellow);font-style:normal;}
+.left-panel p{color:rgba(255,255,255,0.6);font-size:0.95rem;font-weight:600;line-height:1.7;margin-bottom:36px;}
+
+.feature-list{display:flex;flex-direction:column;gap:14px;margin-bottom:36px;}
+.feature-item{display:flex;align-items:center;gap:12px;font-size:0.9rem;font-weight:700;color:rgba(255,255,255,0.85);}
+.fi-icon{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+
+.stats-row{display:flex;gap:0;background:rgba(255,255,255,0.07);border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);}
+.stat-box{flex:1;padding:16px 12px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);}
+.stat-box:last-child{border-right:none;}
+.stat-n{font-family:'Baloo 2',cursive;font-size:1.4rem;color:#fff;}
+.stat-l{font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.45);margin-top:2px;}
+
+/* RIGHT PANEL */
+.right-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 5vw;position:relative;z-index:1;}
+
+/* CARD */
+.auth-card{background:var(--white);border-radius:28px;padding:44px 40px;box-shadow:var(--card-shadow);width:100%;max-width:480px;}
+
+/* TABS */
+.role-tabs{display:flex;gap:10px;margin-bottom:32px;background:var(--light-bg);border-radius:16px;padding:6px;}
+.role-tab{flex:1;padding:11px;border-radius:12px;border:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;cursor:pointer;transition:all 0.2s;color:var(--muted);background:transparent;}
+.role-tab.active{background:var(--white);color:var(--navy);box-shadow:0 2px 12px rgba(26,31,94,0.12);}
+
+.mode-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:2px solid #e8eaf8;}
+.mode-tab{flex:1;padding:12px;border:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;background:transparent;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:all 0.2s;}
+.mode-tab.active{color:var(--coral);border-bottom-color:var(--coral);}
+
+/* FORM */
+.form-section{display:none;}
+.form-section.active{display:block;}
+
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:0.83rem;font-weight:800;color:var(--navy);margin-bottom:7px;}
+.form-input{width:100%;padding:13px 16px;border:2.5px solid #e8eaf8;border-radius:14px;font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:600;color:var(--text);background:var(--light-bg);transition:border-color 0.2s,box-shadow 0.2s;outline:none;}
+.form-input:focus{border-color:var(--coral);box-shadow:0 0 0 4px rgba(255,107,107,0.1);background:#fff;}
+.form-input::placeholder{color:#b0b8c8;}
+
+.input-with-icon{position:relative;}
+.input-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:1.1rem;cursor:pointer;user-select:none;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;}
+
+.remember-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.checkbox-wrap{display:flex;align-items:center;gap:8px;font-size:0.83rem;font-weight:700;color:var(--muted);cursor:pointer;}
+.checkbox-wrap input{width:16px;height:16px;cursor:pointer;accent-color:var(--coral);}
+.forgot-link{font-size:0.83rem;font-weight:800;color:var(--coral);text-decoration:none;}
+.forgot-link:hover{text-decoration:underline;}
+
+.submit-btn{width:100%;padding:15px;border-radius:50px;background:var(--coral);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.02rem;cursor:pointer;border:none;transition:transform 0.18s,box-shadow 0.18s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,107,0.4);}
+.submit-btn.teal{background:var(--teal);}
+.submit-btn.teal:hover{box-shadow:0 8px 28px rgba(78,205,196,0.4);}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e8eaf8;}
+.divider span{font-size:0.78rem;font-weight:700;color:var(--muted);}
+
+.social-btns{display:flex;gap:10px;}
+.social-login{flex:1;padding:12px;border:2.5px solid #e8eaf8;border-radius:14px;background:var(--light-bg);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text);transition:all 0.2s;}
+.social-login:hover{border-color:var(--navy);background:#fff;}
+
+.bottom-switch{text-align:center;margin-top:22px;font-size:0.85rem;font-weight:700;color:var(--muted);}
+.switch-link{color:var(--coral);font-weight:800;text-decoration:none;cursor:pointer;}
+.switch-link:hover{text-decoration:underline;}
+
+.terms-note{text-align:center;font-size:0.73rem;font-weight:600;color:var(--muted);margin-top:14px;line-height:1.6;}
+.terms-note a{color:var(--coral);text-decoration:none;}
+
+/* STUDENT specific */
+.student-avatar-picker{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px;}
+.av-btn{padding:10px;border-radius:14px;border:2.5px solid #e8eaf8;background:var(--light-bg);font-size:1.6rem;cursor:pointer;text-align:center;transition:all 0.2s;}
+.av-btn.selected,.av-btn:hover{border-color:var(--coral);background:#fff0f0;}
+
+/* SUCCESS overlay */
+.success-overlay{display:none;text-align:center;padding:10px 0;}
+.success-overlay.show{display:block;}
+.success-icon{font-size:5rem;margin-bottom:16px;display:block;}
+.success-overlay h3{font-family:'Baloo 2',cursive;font-size:1.8rem;color:var(--navy);margin-bottom:10px;}
+.success-overlay p{color:var(--muted);font-weight:600;line-height:1.7;margin-bottom:24px;}
+.dashboard-btn{display:block;width:100%;padding:15px;border-radius:50px;background:var(--coral);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;border:none;text-decoration:none;text-align:center;transition:transform 0.18s,box-shadow 0.18s;}
+.dashboard-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,107,107,0.4);}
+
+/* FOOTER */
+footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:32px 5vw;position:relative;z-index:1;}
+.footer-bottom-simple{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:0.8rem;}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;font-weight:600;transition:color 0.2s;}
+.footer-links a:hover{color:var(--yellow);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.float{animation:float 3.5s ease-in-out infinite;}
+
+/* MOBILE */
+@media(max-width:900px){
+  .page-wrap{flex-direction:column;}
+  .left-panel{width:100%;padding:36px 5vw 32px;}
+  .left-panel h2{font-size:1.6rem;}
+  .feature-list{display:none;}
+  .right-panel{padding:36px 5vw;}
+  .auth-card{padding:32px 24px;}
+}
+@media(max-width:480px){
+  .nav-links{display:none;}.hamburger{display:flex;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-bottom-simple{flex-direction:column;text-align:center;}
+  .footer-links{flex-wrap:wrap;justify-content:center;gap:12px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Leap<span>Kids</span> 🚀</a>
+  <ul class="nav-links">
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="coding.html">Coding</a></li>
+    <li><a href="robotics.html">Robotics</a></li>
+    <li><a href="finance.html">Finance</a></li>
+    <li><a href="assessment.html">Assessment</a></li>
+    <li><a href="book-demo.html" class="btn" style="background:var(--coral);color:#fff;padding:9px 20px;border-radius:50px;font-weight:800;">Book Free Class</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mm">
+  <a href="programs.html">📚 All Programs</a><a href="coding.html">💻 Coding</a><a href="robotics.html">🤖 Robotics</a><a href="finance.html">💰 Finance</a><a href="assessment.html">🎯 Assessment</a><a href="book-demo.html">🎓 Book FREE Trial →</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <!-- Decorative dots -->
+    <div class="left-deco-dots">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <a href="index.html" class="left-logo">Leap<span>Kids</span> 🚀</a>
+
+    <h2>Welcome to your <em>Learning World!</em></h2>
+    <p>Log in or create your account to access live classes, track progress, earn badges and see your child's learning journey unfold.</p>
+
+    <div class="feature-list">
+      <div class="feature-item"><div class="fi-icon">🎓</div>Access all your live & recorded classes</div>
+      <div class="feature-item"><div class="fi-icon">📊</div>Real-time progress dashboard for parents</div>
+      <div class="feature-item"><div class="fi-icon">🏆</div>Earn badges, certificates and achievements</div>
+      <div class="feature-item"><div class="fi-icon">📅</div>Manage your class schedule anytime</div>
+      <div class="feature-item"><div class="fi-icon">🤝</div>Chat with your mentor & batch mates</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-n">50K+</div><div class="stat-l">Students</div></div>
+      <div class="stat-box"><div class="stat-n">4.9⭐</div><div class="stat-l">Avg Rating</div></div>
+      <div class="stat-box"><div class="stat-n">1200+</div><div class="stat-l">Mentors</div></div>
+    </div>
+
+    <!-- Floating avatar SVG -->
+    <div style="display:flex;justify-content:center;margin-top:28px;gap:12px;">
+      <div class="float" style="background:rgba(255,255,255,0.1);border-radius:20px;padding:12px 16px;font-size:2rem;animation-delay:0s;">😊</div>
+      <div class="float" style="background:rgba(255,255,255,0.1);border-radius:20px;padding:12px 16px;font-size:2rem;animation-delay:0.5s;">😎</div>
+      <div class="float" style="background:rgba(255,255,255,0.1);border-radius:20px;padding:12px 16px;font-size:2rem;animation-delay:1s;">🤩</div>
+      <div class="float" style="background:rgba(255,255,255,0.1);border-radius:20px;padding:12px 16px;font-size:2rem;animation-delay:1.5s;">😄</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="auth-card" style="animation:fadeUp 0.6s ease both;">
+
+      <!-- ROLE TABS -->
+      <div class="role-tabs">
+        <button class="role-tab active" onclick="setRole('parent',this)">👨‍👩‍👧 Parent</button>
+        <button class="role-tab" onclick="setRole('student',this)">🧒 Student</button>
+        <button class="role-tab" onclick="setRole('school',this)">🏫 School</button>
+      </div>
+
+      <!-- MODE TABS -->
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="loginTab" onclick="setMode('login')">Log In</button>
+        <button class="mode-tab" id="signupTab" onclick="setMode('signup')">Create Account</button>
+      </div>
+
+      <!-- ══════════ PARENT LOGIN ══════════ -->
+      <div class="form-section active" id="parent-login">
+        <div class="form-group">
+          <label class="form-label">Mobile Number or Email</label>
+          <input type="text" class="form-input" placeholder="e.g. +91 98765 43210 or you@email.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-with-icon">
+            <input type="password" class="form-input" id="parentPwd" placeholder="Enter your password" />
+            <span class="input-icon" onclick="togglePwd('parentPwd')">👁️</span>
+          </div>
+        </div>
+        <div class="remember-row">
+          <label class="checkbox-wrap"><input type="checkbox" checked /> Keep me logged in</label>
+          <a href="#" class="forgot-link">Forgot Password?</a>
+        </div>
+        <button class="submit-btn" onclick="handleLogin('parent')">🔑 Log In as Parent</button>
+        <div class="divider"><span>or continue with</span></div>
+        <div class="social-btns">
+          <button class="social-login" onclick="handleLogin('parent')">📱 Google</button>
+          <button class="social-login" onclick="handleLogin('parent')">📘 Facebook</button>
+        </div>
+        <div class="bottom-switch">Don't have an account? <span class="switch-link" onclick="setMode('signup')">Sign up FREE →</span></div>
+      </div>
+
+      <!-- ══════════ PARENT SIGNUP ══════════ -->
+      <div class="form-section" id="parent-signup">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Your First Name *</label>
+            <input type="text" class="form-input" placeholder="Priya" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Your Last Name *</label>
+            <input type="text" class="form-input" placeholder="Sharma" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mobile Number *</label>
+          <input type="tel" class="form-input" placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address *</label>
+          <input type="email" class="form-input" placeholder="you@email.com" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Child's Name *</label>
+            <input type="text" class="form-input" placeholder="Aarav" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Child's Age *</label>
+            <select class="form-input">
+              <option value="">Select</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Create Password *</label>
+          <div class="input-with-icon">
+            <input type="password" class="form-input" id="newParentPwd" placeholder="Min. 8 characters" />
+            <span class="input-icon" onclick="togglePwd('newParentPwd')">👁️</span>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="handleSignup('parent')" style="margin-top:4px;">🎉 Create My Account — FREE</button>
+        <p class="terms-note">By signing up you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. No spam ever.</p>
+        <div class="bottom-switch">Already have an account? <span class="switch-link" onclick="setMode('login')">Log in →</span></div>
+      </div>
+
+      <!-- ══════════ STUDENT LOGIN ══════════ -->
+      <div class="form-section" id="student-login">
+        <div style="text-align:center;margin-bottom:20px;">
+          <div style="font-size:0.85rem;font-weight:700;color:var(--muted);margin-bottom:12px;">Pick your avatar to get started! 👇</div>
+          <div class="student-avatar-picker">
+            <button class="av-btn selected" onclick="selectAvatar(this)">😊</button>
+            <button class="av-btn" onclick="selectAvatar(this)">😎</button>
+            <button class="av-btn" onclick="selectAvatar(this)">🤩</button>
+            <button class="av-btn" onclick="selectAvatar(this)">😄</button>
+            <button class="av-btn" onclick="selectAvatar(this)">🦸</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Student ID or Email</label>
+          <input type="text" class="form-input" placeholder="e.g. LK-2025-00123" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Password</label>
+          <div class="input-with-icon">
+            <input type="password" class="form-input" id="studentPwd" placeholder="Enter your secret password" />
+            <span class="input-icon" onclick="togglePwd('studentPwd')">👁️</span>
+          </div>
+        </div>
+        <div class="remember-row">
+          <label class="checkbox-wrap"><input type="checkbox" checked /> Keep me logged in</label>
+          <a href="#" class="forgot-link">Forgot?</a>
+        </div>
+        <button class="submit-btn teal" onclick="handleLogin('student')">🎮 Let's Learn! Log In</button>
+        <div class="bottom-switch" style="margin-top:16px;">New student? Ask your parent to <span class="switch-link" onclick="setRole('parent',null);setMode('signup')">create an account →</span></div>
+      </div>
+
+      <!-- ══════════ STUDENT SIGNUP ══════════ -->
+      <div class="form-section" id="student-signup">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:0.85rem;font-weight:700;color:var(--muted);margin-bottom:10px;">Choose your avatar! 👇</div>
+          <div class="student-avatar-picker">
+            <button class="av-btn selected" onclick="selectAvatar(this)">😊</button>
+            <button class="av-btn" onclick="selectAvatar(this)">😎</button>
+            <button class="av-btn" onclick="selectAvatar(this)">🤩</button>
+            <button class="av-btn" onclick="selectAvatar(this)">😄</button>
+            <button class="av-btn" onclick="selectAvatar(this)">🦸</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Your First Name *</label>
+            <input type="text" class="form-input" placeholder="Aarav" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Your Age *</label>
+            <select class="form-input">
+              <option value="">How old?</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Parent's Mobile Number *</label>
+          <input type="tel" class="form-input" placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Favourite Subject at School</label>
+          <select class="form-input">
+            <option value="">Pick one!</option>
+            <option>Maths 🔢</option><option>Science 🔬</option><option>Computers 💻</option>
+            <option>Art 🎨</option><option>English 📖</option><option>All of them! 🌟</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Create a Secret Password *</label>
+          <div class="input-with-icon">
+            <input type="password" class="form-input" id="newStudentPwd" placeholder="Make it super secret! 🔐" />
+            <span class="input-icon" onclick="togglePwd('newStudentPwd')">👁️</span>
+          </div>
+        </div>
+        <button class="submit-btn teal" onclick="handleSignup('student')">🚀 Start My Learning Journey!</button>
+        <div class="bottom-switch" style="margin-top:14px;">Already have an account? <span class="switch-link" onclick="setMode('login')">Log in →</span></div>
+      </div>
+
+      <!-- ══════════ SCHOOL LOGIN ══════════ -->
+      <div class="form-section" id="school-login">
+        <div style="background:linear-gradient(135deg,#EEF0FF,#e8eaff);border-radius:16px;padding:16px;margin-bottom:20px;text-align:center;">
+          <div style="font-size:1.8rem;margin-bottom:6px;">🏫</div>
+          <div style="font-size:0.85rem;font-weight:800;color:var(--navy);">School & Institution Portal</div>
+          <div style="font-size:0.75rem;color:var(--muted);font-weight:600;margin-top:3px;">For school administrators and teachers</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">School Email / Admin ID</label>
+          <input type="email" class="form-input" placeholder="admin@yourschool.edu.in" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-with-icon">
+            <input type="password" class="form-input" id="schoolPwd" placeholder="School admin password" />
+            <span class="input-icon" onclick="togglePwd('schoolPwd')">👁️</span>
+          </div>
+        </div>
+        <button class="submit-btn" style="background:var(--navy);" onclick="handleLogin('school')">🏫 Access School Dashboard</button>
+        <div class="divider"><span>New school partner?</span></div>
+        <a href="book-demo.html" style="display:block;width:100%;padding:13px;border-radius:50px;border:2.5px solid var(--navy);color:var(--navy);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;text-align:center;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='var(--navy)';this.style.color='#fff'" onmouseout="this.style.background='';this.style.color='var(--navy)'">
+          📞 Request a School Partnership Demo
+        </a>
+      </div>
+
+      <!-- ══════════ SCHOOL SIGNUP ══════════ -->
+      <div class="form-section" id="school-signup">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">School Name *</label>
+            <input type="text" class="form-input" placeholder="DPS Bengaluru" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Board *</label>
+            <select class="form-input">
+              <option value="">Select</option>
+              <option>CBSE</option><option>ICSE</option><option>State Board</option><option>IB</option><option>IGCSE</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Admin Name *</label>
+          <input type="text" class="form-input" placeholder="Principal / Admin name" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Official Email *</label>
+            <input type="email" class="form-input" placeholder="admin@school.edu.in" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile *</label>
+            <input type="tel" class="form-input" placeholder="+91 98765 43210" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Approx. Number of Students</label>
+          <select class="form-input">
+            <option value="">Select</option>
+            <option>Under 200</option><option>200–500</option><option>500–1000</option><option>1000–2000</option><option>2000+</option>
+          </select>
+        </div>
+        <button class="submit-btn" style="background:var(--navy);" onclick="handleSignup('school')">🏫 Register Our School</button>
+        <p class="terms-note">Our school partnership team will reach out within 24 hours to set up your institution's account and customise the program.</p>
+      </div>
+
+      <!-- SUCCESS STATE -->
+      <div class="success-overlay" id="successOverlay">
+        <span class="success-icon" id="successEmoji">🎉</span>
+        <h3 id="successTitle">Welcome back!</h3>
+        <p id="successMsg">You're all set! Redirecting you to your dashboard...</p>
+        <a href="index.html" class="dashboard-btn" id="dashboardBtn">Go to Dashboard →</a>
+        <p style="margin-top:14px;font-size:0.78rem;color:var(--muted);font-weight:600;">Don't have a class yet? <a href="book-demo.html" style="color:var(--coral);font-weight:800;">Book your FREE trial →</a></p>
+      </div>
+
+    </div>
+  </div><!-- end right-panel -->
+</div><!-- end page-wrap -->
+
+<footer>
+  <div class="footer-bottom-simple">
+    <a href="index.html" style="font-family:'Baloo 2',cursive;font-size:1.3rem;color:#fff;text-decoration:none;">Leap<span style="color:var(--coral);">Kids</span> 🚀</a>
+    <div class="footer-links">
+      <a href="programs.html">Programs</a>
+      <a href="assessment.html">Assessment</a>
+      <a href="book-demo.html">Book Demo</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms</a>
+    </div>
+    <span>© 2025 LeapKids. Made with ❤️ in India 🇮🇳</span>
+  </div>
+</footer>
+
+<script>
+let currentRole = 'parent';
+let currentMode = 'login';
+
+function setRole(role, btn) {
+  currentRole = role;
+  if (btn) {
+    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  showSection();
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('loginTab').classList.toggle('active', mode === 'login');
+  document.getElementById('signupTab').classList.toggle('active', mode === 'signup');
+  showSection();
+}
+
+function showSection() {
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  const id = currentRole + '-' + currentMode;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+  document.getElementById('successOverlay').classList.remove('show');
+}
+
+function togglePwd(id) {
+  const input = document.getElementById(id);
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function selectAvatar(el) {
+  el.closest('.student-avatar-picker').querySelectorAll('.av-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function handleLogin(role) {
+  const messages = {
+    parent: { emoji: '👋', title: 'Welcome back, Parent!', msg: 'You\'re now logged in. Access your child\'s progress, upcoming classes and more from your dashboard.', btn: 'Go to Parent Dashboard →' },
+    student: { emoji: '🚀', title: 'Hey there, Superstar! 🌟', msg: 'You\'re logged in and ready to learn! Your next class is waiting. Let\'s go build something amazing!', btn: 'Go to My Classes →' },
+    school: { emoji: '🏫', title: 'School Portal Access Granted!', msg: 'You\'re now in the LeapKids school dashboard. View student rosters, schedules and performance reports.', btn: 'Open School Dashboard →' }
+  };
+  const m = messages[role];
+  showSuccess(m.emoji, m.title, m.msg, m.btn);
+}
+
+// ─────────────────────────────────────────────
+//  GOOGLE APPS SCRIPT — LeapKids Sign Up
+// ─────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkZMcFml9_mwm2vG5hOJl23HOZgmOuUQlnT4Fq6pULa_nkWf5kv8qEVg2JNjnxcA4Q/exec';
+
+async function handleSignup(role) {
+  let formData = {
+    form_type:    'signup',
+    role:         role,
+    submitted_at: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    source_page:  'Sign Up Page — LeapKids Website'
+  };
+
+  if (role === 'parent') {
+    const firstName = document.querySelector('#parent-signup input[placeholder="Priya"]')?.value.trim();
+    const lastName  = document.querySelector('#parent-signup input[placeholder="Sharma"]')?.value.trim();
+    const phone     = document.querySelector('#parent-signup input[type="tel"]')?.value.trim();
+    const email     = document.querySelector('#parent-signup input[type="email"]')?.value.trim();
+    const childName = document.querySelector('#parent-signup input[placeholder="Aarav"]')?.value.trim();
+    const childAge  = document.querySelector('#parent-signup select')?.value;
+    if (!firstName || !phone || !email) {
+      alert('Please fill in your name, mobile number and email before continuing.'); return;
+    }
+    formData = { ...formData, parent_first_name: firstName, parent_last_name: lastName,
+      parent_phone: phone, parent_email: email, child_name: childName, child_age: childAge };
+
+  } else if (role === 'student') {
+    const firstName   = document.querySelector('#student-signup input[placeholder="Aarav"]')?.value.trim();
+    const parentPhone = document.querySelector('#student-signup input[type="tel"]')?.value.trim();
+    const age         = document.querySelector('#student-signup select')?.value;
+    const subject     = document.querySelectorAll('#student-signup select')[1]?.value;
+    const avatar      = document.querySelector('#student-signup .av-btn.selected')?.textContent;
+    if (!firstName || !parentPhone) {
+      alert('Please fill in your name and parent\'s mobile number.'); return;
+    }
+    formData = { ...formData, student_name: firstName, student_age: age,
+      parent_phone: parentPhone, favourite_subject: subject, avatar_chosen: avatar };
+
+  } else if (role === 'school') {
+    const schoolName   = document.querySelector('#school-signup input[placeholder="DPS Bengaluru"]')?.value.trim();
+    const board        = document.querySelector('#school-signup select')?.value;
+    const adminName    = document.querySelector('#school-signup input[placeholder="Principal / Admin name"]')?.value.trim();
+    const email        = document.querySelector('#school-signup input[type="email"]')?.value.trim();
+    const phone        = document.querySelector('#school-signup input[type="tel"]')?.value.trim();
+    const studentCount = document.querySelectorAll('#school-signup select')[1]?.value;
+    if (!schoolName || !email || !phone) {
+      alert('Please fill in the school name, email and phone number.'); return;
+    }
+    formData = { ...formData, school_name: schoolName, board: board, admin_name: adminName,
+      school_email: email, school_phone: phone, student_count: studentCount };
+  }
+
+  // ── Loading state ──
+  const sectionId = role + '-signup';
+  const submitBtn = document.querySelector(`#${sectionId} .submit-btn`);
+  const origText  = submitBtn?.textContent;
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ Creating your account...'; }
+
+  try {
+    // no-cors is required for Google Apps Script — data IS saved, we just can't read the response
+    await fetch(SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(formData)
+    });
+
+    // ── Success ──
+    const successMap = {
+      parent:  { emoji: '🎉', title: 'Account Created!',          msg: 'Welcome to LeapKids! Our team will contact you shortly. Book your child\'s first FREE class now.', btn: 'Book FREE Trial Class →' },
+      student: { emoji: '🌟', title: 'You\'re a LeapKid now! 🚀', msg: 'Amazing! Your account is being set up. Your parent will receive a confirmation call shortly.',    btn: 'See My Dashboard →'      },
+      school:  { emoji: '🏫', title: 'School Registered!',         msg: 'Our school partnership team will call you within 24 hours to set up your institution portal.',    btn: 'Back to Home →'          }
+    };
+    const m = successMap[role];
+    showSuccess(m.emoji, m.title, m.msg, m.btn);
+
+  } catch (err) {
+    alert('Network error. Please check your internet and try again.');
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = origText; }
+  }
+}
+
+function showSuccess(emoji, title, msg, btnText) {
+  document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+  const overlay = document.getElementById('successOverlay');
+  document.getElementById('successEmoji').textContent = emoji;
+  document.getElementById('successTitle').textContent = title;
+  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('dashboardBtn').textContent = btnText;
+  overlay.classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('mm').querySelectorAll('a').forEach(a =>
+  a.addEventListener('click', () => document.getElementById('mm').classList.remove('open'))
+);
+</script>
+</body>
+</html>

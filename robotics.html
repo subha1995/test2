@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robotics & AI for Kids — LeapKids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--yellow:#FFD93D;--coral:#FF6B6B;--teal:#4ECDC4;--navy:#1A1F5E;--purple:#7C5CBF;--green:#6BCB77;--orange:#FF8E53;--white:#FFFFFF;--light-bg:#F8F9FF;--text:#2D2D44;--muted:#6B7280;--card-shadow:0 8px 32px rgba(26,31,94,0.10);--radius:24px;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--light-bg);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(26,31,94,0.035) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+nav{display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:var(--white);box-shadow:0 2px 20px rgba(26,31,94,0.08);position:sticky;top:0;z-index:1000;}
+.logo{font-family:'Baloo 2',cursive;font-size:1.75rem;color:var(--navy);text-decoration:none;}.logo span{color:var(--coral);}
+.nav-links{display:flex;gap:20px;list-style:none;align-items:center;}
+.nav-links a{text-decoration:none;color:var(--text);font-weight:700;font-size:0.88rem;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--teal);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.hamburger span{width:24px;height:3px;background:var(--navy);border-radius:3px;display:block;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--white);padding:20px 5vw 28px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;flex-direction:column;gap:2px;}
+.mobile-menu a{text-decoration:none;color:var(--text);font-weight:700;font-size:1rem;padding:12px 0;border-bottom:1px solid #f0f0f4;display:block;}
+.mobile-menu a:last-child{border:none;}
+.mobile-menu.open{display:flex;}
+.btn{display:inline-block;padding:12px 26px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;cursor:pointer;border:none;transition:transform 0.18s,box-shadow 0.18s;text-decoration:none;text-align:center;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+.btn-primary{background:var(--coral);color:#fff;}.btn-teal{background:var(--teal);color:#fff;}.btn-yellow{background:var(--yellow);color:var(--navy);}.btn-outline{background:transparent;border:2.5px solid var(--navy);color:var(--navy);}
+.btn-lg{padding:15px 36px;font-size:1.05rem;}
+section{padding:70px 5vw;position:relative;z-index:1;}
+.section-tag{display:inline-block;font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);background:#edfafa;padding:5px 14px;border-radius:50px;margin-bottom:12px;}
+.section-title{font-family:'Baloo 2',cursive;font-size:clamp(1.7rem,3vw,2.5rem);color:var(--navy);line-height:1.2;margin-bottom:12px;}
+.section-sub{font-size:1rem;color:var(--muted);font-weight:600;line-height:1.65;}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.55s,transform 0.55s;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+.course-hero{background:linear-gradient(135deg,#E0F7F6 0%,#B2EBE8 40%,#F0FFFE 100%);padding:60px 5vw 50px;position:relative;overflow:hidden;}
+.course-hero-inner{display:flex;gap:40px;align-items:center;flex-wrap:wrap;}
+.course-hero-text{flex:1;min-width:280px;animation:fadeUp 0.7s ease both;}
+.hero-breadcrumb{font-size:0.82rem;color:var(--muted);font-weight:700;margin-bottom:14px;}
+.hero-breadcrumb a{color:var(--teal);text-decoration:none;}
+.course-hero h1{font-family:'Baloo 2',cursive;font-size:clamp(2rem,4vw,3rem);color:var(--navy);line-height:1.15;margin-bottom:16px;}
+.course-hero h1 span{color:var(--teal);}
+.course-hero p{font-size:1.05rem;color:var(--muted);line-height:1.7;font-weight:600;margin-bottom:26px;}
+.hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.hero-badge-pill{background:var(--white);border:2px solid #b2ebe8;border-radius:50px;padding:6px 14px;font-size:0.8rem;font-weight:800;color:#2aaba0;display:flex;align-items:center;gap:5px;}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+.course-hero-visual{flex:0 0 320px;display:flex;justify-content:center;align-items:center;animation:fadeUp 0.7s 0.15s ease both;}
+.visual-card{background:var(--white);border-radius:24px;padding:28px;box-shadow:0 16px 48px rgba(78,205,196,0.22);border:2px solid #b2ebe8;text-align:center;width:280px;}
+.visual-icon{font-size:5rem;margin-bottom:12px;display:block;animation:float 3s ease-in-out infinite;}
+.visual-stat{display:flex;justify-content:space-around;margin-top:18px;padding-top:18px;border-top:1px solid #edfafa;}
+.vs-item{text-align:center;}
+.vs-num{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--navy);}
+.vs-label{font-size:0.72rem;color:var(--muted);font-weight:700;}
+
+.learn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
+.learn-card{background:var(--white);border-radius:18px;padding:22px;box-shadow:var(--card-shadow);transition:transform 0.2s;border-left:4px solid var(--teal);}
+.learn-card:hover{transform:translateY(-4px);}
+.learn-icon{font-size:1.8rem;margin-bottom:10px;}
+.learn-card h4{font-weight:800;color:var(--navy);font-size:0.95rem;margin-bottom:5px;}
+.learn-card p{font-size:0.83rem;color:var(--muted);font-weight:600;line-height:1.5;}
+
+.modules-grid{display:flex;flex-direction:column;gap:20px;}
+.module-card{background:var(--white);border-radius:20px;overflow:hidden;border:2px solid transparent;transition:border-color 0.2s;}
+.module-card:hover{border-color:var(--teal);}
+.module-header{display:flex;align-items:center;gap:18px;padding:22px 24px;cursor:pointer;}
+.module-num{width:56px;height:56px;border-radius:16px;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Baloo 2',cursive;font-size:1.4rem;flex-shrink:0;}
+.module-title{flex:1;}
+.module-title h3{font-size:1.05rem;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.module-title p{font-size:0.8rem;color:var(--muted);font-weight:600;}
+.module-duration{background:var(--light-bg);border-radius:50px;padding:5px 14px;font-size:0.78rem;font-weight:800;color:var(--teal);}
+.module-toggle{font-size:1.3rem;transition:transform 0.3s;}
+.module-body{padding:0 24px;max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.3s;}
+.module-body.open{max-height:600px;padding:0 24px 22px;}
+.topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:16px;margin-top:6px;}
+.topic-item{display:flex;align-items:flex-start;gap:8px;font-size:0.85rem;font-weight:700;color:var(--text);}
+.topic-item::before{content:'▶';color:var(--teal);font-size:0.6rem;margin-top:4px;flex-shrink:0;}
+.project-highlight{background:linear-gradient(135deg,#edfafa,#b2ebe8);border-radius:12px;padding:14px 18px;margin-top:10px;}
+.project-highlight h5{font-size:0.82rem;font-weight:800;color:var(--teal);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}
+.project-highlight p{font-size:0.88rem;font-weight:700;color:var(--navy);}
+
+.kit-section{background:var(--navy);}
+.kit-section .section-tag{background:rgba(78,205,196,0.2);color:var(--teal);}
+.kit-section .section-title{color:#fff;}
+.kit-section .section-sub{color:rgba(255,255,255,0.6);}
+.kit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;margin-top:36px;}
+.kit-card{background:rgba(255,255,255,0.07);border:1.5px solid rgba(78,205,196,0.25);border-radius:18px;padding:24px;text-align:center;transition:transform 0.2s,background 0.2s;}
+.kit-card:hover{transform:translateY(-4px);background:rgba(78,205,196,0.12);}
+.kit-icon{font-size:2.4rem;margin-bottom:12px;}
+.kit-card h4{font-size:0.92rem;font-weight:800;color:#fff;margin-bottom:6px;}
+.kit-card p{font-size:0.8rem;color:rgba(255,255,255,0.55);font-weight:600;line-height:1.5;}
+
+.projects-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
+.proj-card{border-radius:18px;overflow:hidden;box-shadow:var(--card-shadow);transition:transform 0.2s;}
+.proj-card:hover{transform:translateY(-5px);}
+.proj-thumb{height:140px;display:flex;align-items:center;justify-content:center;font-size:4rem;}
+.proj-info{background:var(--white);padding:16px;}
+.proj-title{font-weight:800;font-size:0.95rem;color:var(--navy);margin-bottom:4px;}
+.proj-level{font-size:0.75rem;color:var(--muted);font-weight:600;}
+
+.course-cta{background:linear-gradient(135deg,var(--teal) 0%,#2aaba0 100%);text-align:center;padding:70px 5vw;position:relative;overflow:hidden;}
+.course-cta::before{content:'🤖';position:absolute;font-size:12rem;opacity:0.07;top:-30px;right:5%;pointer-events:none;}
+.course-cta h2{font-family:'Baloo 2',cursive;font-size:clamp(1.8rem,3vw,2.6rem);color:#fff;margin-bottom:12px;}
+.course-cta p{color:rgba(255,255,255,0.85);font-size:1rem;font-weight:600;margin-bottom:30px;}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:48px 5vw 24px;position:relative;z-index:1;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px;}
+.footer-logo{font-family:'Baloo 2',cursive;font-size:1.5rem;color:#fff;text-decoration:none;display:block;margin-bottom:10px;}.footer-logo span{color:var(--coral);}
+.footer-col h5{color:#fff;font-size:0.84rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col a{color:rgba(255,255,255,0.55);text-decoration:none;font-size:0.85rem;font-weight:600;transition:color 0.2s;}
+.footer-col a:hover{color:var(--yellow);}
+.footer-brand p{font-size:0.85rem;line-height:1.65;font-weight:600;margin-top:10px;}
+.footer-bottom-simple{border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:0.8rem;}
+
+@media(max-width:820px){
+  .nav-links{display:none;}.hamburger{display:flex;}
+  .course-hero-inner{flex-direction:column;text-align:center;}
+  .course-hero-visual{flex:none;}
+  .hero-cta,.hero-badges{justify-content:center;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr;}.footer-bottom-simple{flex-direction:column;text-align:center;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Leap<span>Kids</span> 🚀</a>
+  <ul class="nav-links">
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="coding.html">Coding</a></li>
+    <li><a href="robotics.html" class="active">Robotics</a></li>
+    <li><a href="finance.html">Finance</a></li>
+    <li><a href="assessment.html">Assessment</a></li>
+    <li><a href="login.html" class="btn btn-outline" style="padding:8px 20px">Login</a></li>
+    <li><a href="book-demo.html" class="btn btn-primary">Book Free Class</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mm">
+  <a href="programs.html">📚 All Programs</a><a href="coding.html">💻 Coding</a><a href="robotics.html">🤖 Robotics</a><a href="finance.html">💰 Finance</a><a href="assessment.html">🎯 Assessment</a><a href="login.html">👤 Login</a><a href="book-demo.html">🎓 Book FREE Trial →</a>
+</div>
+
+<div class="course-hero">
+  <div class="course-hero-inner">
+    <div class="course-hero-text">
+      <div class="hero-breadcrumb"><a href="index.html">Home</a> → <a href="programs.html">Programs</a> → Robotics</div>
+      <h1>Robotics & <span>AI</span><br>for Kids 🤖</h1>
+      <p>Build real robots, program them, and explore Artificial Intelligence — with hands-on kits delivered to your home! For kids aged 8–18, no experience needed.</p>
+      <div class="hero-badges">
+        <span class="hero-badge-pill">🤖 Build Real Robots</span>
+        <span class="hero-badge-pill">🧠 Learn AI Basics</span>
+        <span class="hero-badge-pill">📦 Kit Home Delivery</span>
+        <span class="hero-badge-pill">🏆 Win Hackathons</span>
+      </div>
+      <div class="hero-cta">
+        <a href="book-demo.html" class="btn btn-teal btn-lg">🎓 Book FREE Trial Class</a>
+        <a href="assessment.html" class="btn btn-outline btn-lg">Take Assessment</a>
+      </div>
+    </div>
+    <div class="course-hero-visual">
+      <div class="visual-card">
+        <span class="visual-icon">🤖</span>
+        <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--navy);margin-bottom:6px;">Robotics & AI Program</div>
+        <div style="font-size:0.82rem;color:var(--muted);font-weight:600;">4 Modules · 24 Weeks · Kit Included</div>
+        <div class="visual-stat">
+          <div class="vs-item"><div class="vs-num">8–18</div><div class="vs-label">Age Group</div></div>
+          <div class="vs-item"><div class="vs-num">4.9⭐</div><div class="vs-label">Rating</div></div>
+          <div class="vs-item"><div class="vs-num">12K+</div><div class="vs-label">Students</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section style="background:var(--white);">
+  <div class="fade-in" style="text-align:center;margin-bottom:40px;">
+    <div class="section-tag">Learning Outcomes</div>
+    <h2 class="section-title">What Your Child Will Learn 🚀</h2>
+    <p class="section-sub" style="max-width:520px;margin:0 auto;">Hands-on learning with real physical robots, sensors and AI tools.</p>
+  </div>
+  <div class="learn-grid fade-in">
+    <div class="learn-card"><div class="learn-icon">⚙️</div><h4>Mechanics & Electronics</h4><p>Understand gears, motors, sensors and circuits — how machines physically work.</p></div>
+    <div class="learn-card"><div class="learn-icon">💻</div><h4>Robot Programming</h4><p>Write code to control real robots using block-based and Python programming.</p></div>
+    <div class="learn-card"><div class="learn-icon">🧠</div><h4>AI & Machine Learning</h4><p>Train simple AI models, use computer vision and understand how AI works.</p></div>
+    <div class="learn-card"><div class="learn-icon">📡</div><h4>IoT & Smart Devices</h4><p>Connect robots to the internet, build smart-home gadgets and sensor systems.</p></div>
+    <div class="learn-card"><div class="learn-icon">🛠️</div><h4>Design & Prototyping</h4><p>Plan, design and build from scratch using engineering thinking and creativity.</p></div>
+    <div class="learn-card"><div class="learn-icon">🏆</div><h4>Hackathon Readiness</h4><p>Compete in national robotics competitions and hackathons — fully prepared!</p></div>
+  </div>
+</section>
+
+<section style="background:var(--light-bg);">
+  <div class="fade-in" style="text-align:center;margin-bottom:40px;">
+    <div class="section-tag">Curriculum</div>
+    <h2 class="section-title">Complete Course Curriculum 📚</h2>
+    <p class="section-sub" style="max-width:500px;margin:0 auto;">4 progressive modules from basic electronics to advanced AI robotics.</p>
+  </div>
+  <div class="modules-grid fade-in">
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num">1</div>
+        <div class="module-title"><h3>⚙️ Intro to Electronics & Circuits</h3><p>Understand how electricity works and build your first circuits — ages 8+</p></div>
+        <div class="module-duration">Weeks 1–5</div>
+        <div class="module-toggle">▼</div>
+      </div>
+      <div class="module-body open">
+        <div class="topics-grid">
+          <div class="topic-item">What is electricity & voltage</div>
+          <div class="topic-item">Resistors, LEDs, breadboards</div>
+          <div class="topic-item">Series and parallel circuits</div>
+          <div class="topic-item">Introduction to Arduino</div>
+          <div class="topic-item">Digital vs analog signals</div>
+          <div class="topic-item">Buttons, switches, buzzers</div>
+          <div class="topic-item">First Arduino sketches</div>
+          <div class="topic-item">Light & sound circuits</div>
+        </div>
+        <div class="project-highlight">
+          <h5>🛠️ Module Project</h5>
+          <p>"Traffic Light Controller" — A working LED traffic light controlled by Arduino with timing and button inputs</p>
+        </div>
+      </div>
+    </div>
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:#2aaba0;">2</div>
+        <div class="module-title"><h3>🤖 Build Your First Robot</h3><p>Assemble and program a moving robot from scratch — ages 9+</p></div>
+        <div class="module-duration">Weeks 6–12</div>
+        <div class="module-toggle">▼</div>
+      </div>
+      <div class="module-body">
+        <div class="topics-grid">
+          <div class="topic-item">Motors, wheels and chassis</div>
+          <div class="topic-item">H-bridge motor drivers</div>
+          <div class="topic-item">Ultrasonic distance sensors</div>
+          <div class="topic-item">IR sensors for line following</div>
+          <div class="topic-item">Robot movement control</div>
+          <div class="topic-item">Obstacle avoidance logic</div>
+          <div class="topic-item">Bluetooth remote control</div>
+          <div class="topic-item">Sensor fusion basics</div>
+        </div>
+        <div class="project-highlight">
+          <h5>🛠️ Module Project</h5>
+          <p>"Line-Following Robot" — A self-navigating robot that follows a track, avoids obstacles, and can be remote-controlled</p>
+        </div>
+      </div>
+    </div>
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:var(--purple);">3</div>
+        <div class="module-title"><h3>🌐 IoT & Smart Systems</h3><p>Connect robots to the internet and build smart devices — ages 11+</p></div>
+        <div class="module-duration">Weeks 13–18</div>
+        <div class="module-toggle">▼</div>
+      </div>
+      <div class="module-body">
+        <div class="topics-grid">
+          <div class="topic-item">Introduction to IoT</div>
+          <div class="topic-item">ESP8266/ESP32 WiFi modules</div>
+          <div class="topic-item">MQTT protocol basics</div>
+          <div class="topic-item">Temperature & humidity sensors</div>
+          <div class="topic-item">Cloud data dashboards</div>
+          <div class="topic-item">Smart home automation</div>
+          <div class="topic-item">Voice command integration</div>
+          <div class="topic-item">Mobile app control</div>
+        </div>
+        <div class="project-highlight">
+          <h5>🛠️ Module Project</h5>
+          <p>"Smart Plant Monitor" — An IoT device that monitors soil, water, light and sends alerts to your phone when plants need care</p>
+        </div>
+      </div>
+    </div>
+    <div class="module-card">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-num" style="background:var(--green);">4</div>
+        <div class="module-title"><h3>🧠 AI & Computer Vision</h3><p>Train AI models and use computer vision in robots — ages 13+</p></div>
+        <div class="module-duration">Weeks 19–24</div>
+        <div class="module-toggle">▼</div>
+      </div>
+      <div class="module-body">
+        <div class="topics-grid">
+          <div class="topic-item">What is Machine Learning</div>
+          <div class="topic-item">Training your first AI model</div>
+          <div class="topic-item">Image recognition basics</div>
+          <div class="topic-item">OpenCV & camera modules</div>
+          <div class="topic-item">Face & object detection</div>
+          <div class="topic-item">Gesture-controlled robots</div>
+          <div class="topic-item">Neural networks simplified</div>
+          <div class="topic-item">AI ethics for kids</div>
+        </div>
+        <div class="project-highlight">
+          <h5>🛠️ Module Project</h5>
+          <p>"AI-Powered Sorting Robot" — A robot that uses computer vision to identify and sort coloured objects automatically</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="kit-section">
+  <div class="fade-in" style="text-align:center;">
+    <div class="section-tag">What's In The Box 📦</div>
+    <h2 class="section-title">Your Home Robotics Lab — Delivered!</h2>
+    <p class="section-sub" style="max-width:500px;margin:0 auto;color:rgba(255,255,255,0.6);">We ship a complete STEM kit to your home so your child can learn with real hardware right from Day 1.</p>
+  </div>
+  <div class="kit-grid fade-in">
+    <div class="kit-card"><div class="kit-icon">🔌</div><h4>Arduino Mega Board</h4><p>Industry-standard microcontroller used by engineers worldwide</p></div>
+    <div class="kit-card"><div class="kit-icon">🚗</div><h4>Robot Chassis Kit</h4><p>4-wheel drive chassis, motors, wheels and mounting hardware</p></div>
+    <div class="kit-card"><div class="kit-icon">📡</div><h4>12+ Sensors Pack</h4><p>Ultrasonic, IR, temperature, humidity, light and motion sensors</p></div>
+    <div class="kit-card"><div class="kit-icon">💡</div><h4>Electronics Pack</h4><p>LEDs, resistors, breadboard, jumper wires, buttons and more</p></div>
+    <div class="kit-card"><div class="kit-icon">📱</div><h4>Bluetooth Module</h4><p>Control your robot from your smartphone via our free app</p></div>
+    <div class="kit-card"><div class="kit-icon">📖</div><h4>Project Workbook</h4><p>Printed step-by-step guide for all 4 module projects</p></div>
+  </div>
+</section>
+
+<section style="background:var(--white);">
+  <div class="fade-in" style="text-align:center;margin-bottom:40px;">
+    <div class="section-tag">Student Projects</div>
+    <h2 class="section-title">Robots Built by LeapKids Students 🛠️</h2>
+  </div>
+  <div class="projects-row fade-in">
+    <div class="proj-card"><div class="proj-thumb" style="background:linear-gradient(135deg,#E0F7F6,#B2EBE8);">🚦</div><div class="proj-info"><div class="proj-title">Traffic Light Controller</div><div class="proj-level">Module 1 · Age 8+</div></div></div>
+    <div class="proj-card"><div class="proj-thumb" style="background:linear-gradient(135deg,#edfafa,#80ddd8);">🤖</div><div class="proj-info"><div class="proj-title">Line-Following Robot</div><div class="proj-level">Module 2 · Age 9+</div></div></div>
+    <div class="proj-card"><div class="proj-thumb" style="background:linear-gradient(135deg,#e8f5e9,#a5d6a7);">🌱</div><div class="proj-info"><div class="proj-title">Smart Plant Monitor</div><div class="proj-level">Module 3 · Age 11+</div></div></div>
+    <div class="proj-card"><div class="proj-thumb" style="background:linear-gradient(135deg,#ede7ff,#c5b3f5);">🧠</div><div class="proj-info"><div class="proj-title">AI Sorting Robot</div><div class="proj-level">Module 4 · Age 13+</div></div></div>
+  </div>
+</section>
+
+<div class="course-cta">
+  <h2>Ready to Build Your Child's First Robot? 🤖</h2>
+  <p>Kit delivered to your home. First class FREE. Join 12,000+ young robotics engineers!</p>
+  <div class="cta-row">
+    <a href="book-demo.html" class="btn btn-yellow btn-lg">🎓 Book FREE Trial Now</a>
+    <a href="assessment.html" class="btn" style="background:rgba(255,255,255,0.2);color:#fff;padding:15px 36px;font-size:1.05rem;font-weight:800;border-radius:50px;">🎯 Take Free Assessment</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="footer-logo">Leap<span>Kids</span> 🚀</a><p>Empowering school kids with coding, robotics & financial literacy. Trusted by 1000+ schools across India.</p></div>
+    <div class="footer-col"><h5>Programs</h5><ul><li><a href="coding.html">Coding</a></li><li><a href="robotics.html">Robotics</a></li><li><a href="finance.html">Finance</a></li><li><a href="programs.html">All Programs</a></li></ul></div>
+    <div class="footer-col"><h5>Quick Links</h5><ul><li><a href="assessment.html">Free Assessment</a></li><li><a href="book-demo.html">Book Demo</a></li><li><a href="login.html">Login</a></li><li><a href="#">About Us</a></li></ul></div>
+    <div class="footer-col"><h5>Support</h5><ul><li><a href="#">FAQs</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Refund Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom-simple"><span>© 2025 LeapKids. Made with ❤️ in India 🇮🇳</span><span>Bengaluru · Mumbai · Delhi</span></div>
+</footer>
+<script>
+function toggleModule(h){const b=h.nextElementSibling,a=h.querySelector('.module-toggle'),o=b.classList.contains('open');document.querySelectorAll('.module-body').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.module-toggle').forEach(x=>x.style.transform='');if(!o){b.classList.add('open');a.style.transform='rotate(180deg)';}}
+document.querySelectorAll('.module-header').forEach(h=>{if(h.nextElementSibling.classList.contains('open'))h.querySelector('.module-toggle').style.transform='rotate(180deg)';});
+document.getElementById('mm').querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mm').classList.remove('open')));
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

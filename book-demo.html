@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Free Class — LeapKids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--yellow:#FFD93D;--coral:#FF6B6B;--teal:#4ECDC4;--navy:#1A1F5E;--purple:#7C5CBF;--green:#6BCB77;--orange:#FF8E53;--white:#FFFFFF;--light-bg:#F8F9FF;--text:#2D2D44;--muted:#6B7280;--card-shadow:0 8px 32px rgba(26,31,94,0.10);--radius:24px;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--light-bg);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(26,31,94,0.035) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+nav{display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:var(--white);box-shadow:0 2px 20px rgba(26,31,94,0.08);position:sticky;top:0;z-index:1000;}
+.logo{font-family:'Baloo 2',cursive;font-size:1.75rem;color:var(--navy);text-decoration:none;}.logo span{color:var(--coral);}
+.nav-links{display:flex;gap:20px;list-style:none;align-items:center;}
+.nav-links a{text-decoration:none;color:var(--text);font-weight:700;font-size:0.88rem;transition:color 0.2s;}
+.nav-links a:hover{color:var(--coral);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.hamburger span{width:24px;height:3px;background:var(--navy);border-radius:3px;display:block;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--white);padding:20px 5vw 28px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;flex-direction:column;gap:2px;}
+.mobile-menu a{text-decoration:none;color:var(--text);font-weight:700;font-size:1rem;padding:12px 0;border-bottom:1px solid #f0f0f4;display:block;}
+.mobile-menu.open{display:flex;}
+.btn{display:inline-block;padding:12px 26px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;cursor:pointer;border:none;transition:transform 0.18s,box-shadow 0.18s;text-decoration:none;text-align:center;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+.btn-primary{background:var(--coral);color:#fff;}.btn-outline{background:transparent;border:2.5px solid var(--navy);color:var(--navy);}
+.btn-lg{padding:15px 36px;font-size:1.05rem;}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.55s,transform 0.55s;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* LAYOUT */
+.page-wrap{min-height:calc(100vh - 64px);display:flex;align-items:stretch;}
+.left-panel{width:420px;flex-shrink:0;background:linear-gradient(160deg,var(--navy) 0%,#2D3580 100%);padding:56px 44px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
+.left-panel::before{content:'🎓';position:absolute;font-size:16rem;opacity:0.05;bottom:-40px;right:-30px;}
+.left-panel::after{content:'⭐';position:absolute;font-size:8rem;opacity:0.05;top:-20px;left:-10px;}
+.left-logo{font-family:'Baloo 2',cursive;font-size:1.6rem;color:#fff;text-decoration:none;display:block;margin-bottom:40px;}
+.left-logo span{color:var(--coral);}
+.left-panel h1{font-family:'Baloo 2',cursive;font-size:2.2rem;color:#fff;line-height:1.2;margin-bottom:14px;}
+.left-panel h1 span{color:var(--yellow);}
+.left-panel p{color:rgba(255,255,255,0.65);font-size:0.95rem;font-weight:600;line-height:1.7;margin-bottom:36px;}
+.trust-items{display:flex;flex-direction:column;gap:14px;}
+.trust-item{display:flex;align-items:center;gap:12px;font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.8);}
+.trust-icon{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.left-testimonial{margin-top:36px;background:rgba(255,255,255,0.08);border-radius:16px;padding:20px;border-left:4px solid var(--yellow);}
+.left-testimonial p{font-size:0.85rem;color:rgba(255,255,255,0.8);font-weight:600;line-height:1.6;margin-bottom:10px;font-style:italic;}
+.left-testimonial .author{font-size:0.78rem;color:rgba(255,255,255,0.5);font-weight:700;}
+
+.right-panel{flex:1;padding:56px 5vw;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;}
+.form-card{background:var(--white);border-radius:28px;padding:44px 40px;box-shadow:var(--card-shadow);width:100%;max-width:520px;animation:fadeUp 0.7s ease both;}
+
+.form-header{margin-bottom:32px;}
+.form-header h2{font-family:'Baloo 2',cursive;font-size:1.9rem;color:var(--navy);margin-bottom:6px;}
+.form-header p{font-size:0.9rem;color:var(--muted);font-weight:600;}
+.free-tag{display:inline-block;background:#e8fff0;color:var(--green);font-size:0.75rem;font-weight:800;padding:3px 12px;border-radius:50px;margin-left:8px;vertical-align:middle;}
+
+.step-indicator{display:flex;align-items:center;gap:0;margin-bottom:36px;}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:800;flex-shrink:0;transition:all 0.3s;}
+.step-dot.active{background:var(--coral);color:#fff;}
+.step-dot.done{background:var(--green);color:#fff;}
+.step-dot.pending{background:#f0f0f8;color:var(--muted);}
+.step-line{flex:1;height:3px;background:#f0f0f8;transition:background 0.3s;}
+.step-line.done{background:var(--green);}
+.step-label{font-size:0.65rem;font-weight:700;text-align:center;color:var(--muted);margin-top:4px;}
+
+.form-step{display:none;}
+.form-step.active{display:block;}
+
+.form-group{margin-bottom:20px;}
+.form-label{display:block;font-size:0.85rem;font-weight:800;color:var(--navy);margin-bottom:7px;}
+.form-input{width:100%;padding:13px 16px;border:2.5px solid #e8eaf8;border-radius:14px;font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:600;color:var(--text);background:var(--light-bg);transition:border-color 0.2s,box-shadow 0.2s;outline:none;}
+.form-input:focus{border-color:var(--coral);box-shadow:0 0 0 4px rgba(255,107,107,0.1);background:#fff;}
+.form-input::placeholder{color:#b0b8c8;}
+select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+/* PROGRAM SELECTOR */
+.program-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px;}
+.prog-option{border:2.5px solid #e8eaf8;border-radius:14px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--light-bg);}
+.prog-option:hover{border-color:var(--coral);background:#fff0f0;}
+.prog-option.selected{border-color:var(--coral);background:#fff0f0;}
+.prog-option .prog-emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.prog-option .prog-name{font-size:0.78rem;font-weight:800;color:var(--navy);}
+.prog-option input{display:none;}
+
+/* SLOT SELECTOR */
+.slot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.slot-btn{border:2.5px solid #e8eaf8;border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--light-bg);font-family:'Nunito',sans-serif;}
+.slot-btn:hover,.slot-btn.selected{border-color:var(--coral);background:#fff0f0;}
+.slot-time{font-size:0.88rem;font-weight:800;color:var(--navy);display:block;}
+.slot-day{font-size:0.72rem;font-weight:700;color:var(--muted);display:block;margin-top:2px;}
+
+.form-submit-btn{width:100%;padding:16px;border-radius:50px;background:var(--coral);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.05rem;cursor:pointer;border:none;transition:transform 0.18s,box-shadow 0.18s;margin-top:8px;}
+.form-submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,107,0.4);}
+.form-nav{display:flex;gap:12px;margin-top:16px;}
+.btn-back{background:var(--light-bg);color:var(--muted);border:none;padding:12px 24px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;transition:all 0.2s;}
+.btn-back:hover{background:#e8eaf8;}
+.btn-next{flex:1;padding:14px;border-radius:50px;background:var(--navy);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;border:none;transition:transform 0.18s,box-shadow 0.18s;}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,31,94,0.3);}
+
+.success-state{text-align:center;display:none;}
+.success-icon{font-size:5rem;margin-bottom:20px;display:block;}
+.success-state h2{font-family:'Baloo 2',cursive;font-size:2rem;color:var(--navy);margin-bottom:10px;}
+.success-state p{color:var(--muted);font-weight:600;line-height:1.7;margin-bottom:28px;}
+.success-details{background:var(--light-bg);border-radius:18px;padding:20px;text-align:left;margin-bottom:24px;}
+.success-detail{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #e8eaf8;font-size:0.88rem;font-weight:700;}
+.success-detail:last-child{border-bottom:none;}
+.success-detail span:first-child{color:var(--coral);}
+
+.helper-text{font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:5px;}
+
+footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:40px 5vw 24px;position:relative;z-index:1;}
+.footer-bottom-simple{border-top:1px solid rgba(255,255,255,0.1);padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:0.8rem;}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.8rem;font-weight:600;transition:color 0.2s;}
+.footer-links a:hover{color:var(--yellow);}
+
+@media(max-width:900px){
+  .page-wrap{flex-direction:column;}
+  .left-panel{width:100%;padding:36px 5vw;}
+  .left-panel h1{font-size:1.8rem;}
+  .left-testimonial{display:none;}
+  .form-card{padding:32px 24px;}
+}
+@media(max-width:480px){
+  .form-row{grid-template-columns:1fr;}
+  .program-selector{grid-template-columns:1fr 1fr 1fr;}
+  .slot-grid{grid-template-columns:1fr 1fr;}
+  .nav-links{display:none;}.hamburger{display:flex;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Leap<span>Kids</span> 🚀</a>
+  <ul class="nav-links">
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="coding.html">Coding</a></li>
+    <li><a href="robotics.html">Robotics</a></li>
+    <li><a href="finance.html">Finance</a></li>
+    <li><a href="assessment.html">Assessment</a></li>
+    <li><a href="login.html" class="btn btn-outline" style="padding:8px 20px">Login</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mm">
+  <a href="programs.html">📚 All Programs</a><a href="coding.html">💻 Coding</a><a href="robotics.html">🤖 Robotics</a><a href="finance.html">💰 Finance</a><a href="assessment.html">🎯 Assessment</a><a href="login.html">👤 Login</a>
+</div>
+
+<div class="page-wrap">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <a href="index.html" class="left-logo">Leap<span>Kids</span> 🚀</a>
+    <h1>Book Your Child's <span>FREE Trial Class</span> Today!</h1>
+    <p>Takes just 2 minutes. No credit card needed. Our counsellor will confirm your slot and get your child set up for their first live class.</p>
+    <div class="trust-items">
+      <div class="trust-item"><div class="trust-icon">🎓</div>100% FREE — No payment till you're happy</div>
+      <div class="trust-item"><div class="trust-icon">📞</div>Counsellor calls within 30 minutes</div>
+      <div class="trust-item"><div class="trust-icon">👩‍🏫</div>Live class with an expert mentor</div>
+      <div class="trust-item"><div class="trust-icon">🔒</div>No spam, ever. We value your privacy</div>
+      <div class="trust-item"><div class="trust-icon">🌐</div>Classes in Hindi & English</div>
+    </div>
+    <div class="left-testimonial">
+      <p>"Booked the free class on a whim — my daughter loved it so much she cried when it ended. We enrolled the same evening!"</p>
+      <div class="author">— Meenakshi R., Parent, Chennai</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="form-card">
+      <!-- Step Indicator -->
+      <div style="margin-bottom:28px;">
+        <div class="step-indicator" id="stepIndicator">
+          <div>
+            <div class="step-dot active" id="dot1">1</div>
+            <div class="step-label">Details</div>
+          </div>
+          <div class="step-line" id="line1"></div>
+          <div>
+            <div class="step-dot pending" id="dot2">2</div>
+            <div class="step-label">Program</div>
+          </div>
+          <div class="step-line" id="line2"></div>
+          <div>
+            <div class="step-dot pending" id="dot3">3</div>
+            <div class="step-label">Schedule</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="form-step active" id="step1">
+        <div class="form-header">
+          <h2>Child's Details <span class="free-tag">FREE</span></h2>
+          <p>Tell us a bit about your child so we can personalise the experience.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Child's Full Name *</label>
+          <input type="text" class="form-input" id="childName" placeholder="e.g. Aarav Sharma" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Child's Age *</label>
+            <select class="form-input" id="childAge">
+              <option value="">Select age</option>
+              <option>6 years</option><option>7 years</option><option>8 years</option>
+              <option>9 years</option><option>10 years</option><option>11 years</option>
+              <option>12 years</option><option>13 years</option><option>14 years</option>
+              <option>15 years</option><option>16 years</option><option>17 years</option><option>18 years</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Current Grade *</label>
+            <select class="form-input" id="childGrade">
+              <option value="">Select grade</option>
+              <option>Class 1</option><option>Class 2</option><option>Class 3</option>
+              <option>Class 4</option><option>Class 5</option><option>Class 6</option>
+              <option>Class 7</option><option>Class 8</option><option>Class 9</option>
+              <option>Class 10</option><option>Class 11</option><option>Class 12</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Parent's Name *</label>
+          <input type="text" class="form-input" id="parentName" placeholder="e.g. Priya Sharma" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mobile Number *</label>
+            <input type="tel" class="form-input" id="parentPhone" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address *</label>
+            <input type="email" class="form-input" id="parentEmail" placeholder="you@email.com" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City *</label>
+          <select class="form-input" id="city">
+            <option value="">Select your city</option>
+            <option>Bengaluru</option><option>Mumbai</option><option>Delhi / NCR</option>
+            <option>Chennai</option><option>Hyderabad</option><option>Pune</option>
+            <option>Kolkata</option><option>Ahmedabad</option><option>Jaipur</option><option>Other</option>
+          </select>
+        </div>
+        <button class="btn-next" onclick="nextStep(1)">Continue — Choose Program →</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="form-step" id="step2">
+        <div class="form-header">
+          <h2>Pick a Program 🎓</h2>
+          <p>Which program would you like your child to try first? You can always add more later.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Select Program *</label>
+          <div class="program-selector">
+            <div class="prog-option selected" onclick="selectProgram(this,'Coding')">
+              <span class="prog-emoji">💻</span>
+              <div class="prog-name">Coding</div>
+            </div>
+            <div class="prog-option" onclick="selectProgram(this,'Robotics')">
+              <span class="prog-emoji">🤖</span>
+              <div class="prog-name">Robotics</div>
+            </div>
+            <div class="prog-option" onclick="selectProgram(this,'Finance')">
+              <span class="prog-emoji">💰</span>
+              <div class="prog-name">Finance</div>
+            </div>
+          </div>
+          <div class="helper-text">💡 Not sure? Choose Coding — it's our most popular starting point!</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Prior Experience?</label>
+          <select class="form-input" id="experience">
+            <option value="">Select experience level</option>
+            <option>Complete Beginner — No experience at all</option>
+            <option>Some exposure — Tried a bit at school or home</option>
+            <option>Intermediate — Can do basics independently</option>
+            <option>Advanced — Looking to level up skills</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Language Preference</label>
+          <select class="form-input" id="language">
+            <option value="">Select language</option>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>No preference — Either is fine</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">How did you hear about us?</label>
+          <select class="form-input">
+            <option value="">Select option</option>
+            <option>Google / Search</option>
+            <option>Instagram / Facebook</option>
+            <option>Friend / Family Referral</option>
+            <option>School Recommendation</option>
+            <option>YouTube</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-nav">
+          <button class="btn-back" onclick="prevStep(2)">← Back</button>
+          <button class="btn-next" onclick="nextStep(2)">Continue — Pick a Slot →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="form-step" id="step3">
+        <div class="form-header">
+          <h2>Choose Your Slot 📅</h2>
+          <p>Pick a time that works for your child. All slots are 45–60 minutes long.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preferred Day *</label>
+          <div class="slot-grid">
+            <button class="slot-btn" onclick="selectSlot(this)"><span class="slot-time">Monday</span><span class="slot-day">Weekday</span></button>
+            <button class="slot-btn selected" onclick="selectSlot(this)"><span class="slot-time">Saturday</span><span class="slot-day">Weekend ⭐</span></button>
+            <button class="slot-btn" onclick="selectSlot(this)"><span class="slot-time">Wednesday</span><span class="slot-day">Weekday</span></button>
+            <button class="slot-btn" onclick="selectSlot(this)"><span class="slot-time">Sunday</span><span class="slot-day">Weekend</span></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preferred Time *</label>
+          <div class="slot-grid">
+            <button class="slot-btn" onclick="selectTime(this)"><span class="slot-time">9:00 AM</span><span class="slot-day">Morning</span></button>
+            <button class="slot-btn selected" onclick="selectTime(this)"><span class="slot-time">11:00 AM</span><span class="slot-day">Late Morning ⭐</span></button>
+            <button class="slot-btn" onclick="selectTime(this)"><span class="slot-time">4:00 PM</span><span class="slot-day">After School</span></button>
+            <button class="slot-btn" onclick="selectTime(this)"><span class="slot-time">6:00 PM</span><span class="slot-day">Evening</span></button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Any message for our counsellor?</label>
+          <textarea class="form-input" rows="3" placeholder="e.g. My daughter is very excited about robotics and wants to build her own robot!" style="resize:none;border-radius:14px;"></textarea>
+        </div>
+        <div class="form-nav">
+          <button class="btn-back" onclick="prevStep(3)">← Back</button>
+        </div>
+        <button class="form-submit-btn" onclick="submitForm()" style="margin-top:12px;">🎓 Confirm My FREE Trial Class!</button>
+        <p style="text-align:center;font-size:0.76rem;color:var(--muted);font-weight:600;margin-top:10px;">🔒 No spam · No payment · Cancel anytime · Privacy guaranteed</p>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-state" id="successState">
+        <span class="success-icon">🎉</span>
+        <h2>You're All Set!</h2>
+        <p>Your FREE trial class has been booked! Our counsellor will call you within <strong>30 minutes</strong> to confirm everything and share the class link.</p>
+        <div class="success-details">
+          <div class="success-detail"><span>👤</span><span id="confirmName">Aarav Sharma</span></div>
+          <div class="success-detail"><span>💻</span><span id="confirmProgram">Coding</span></div>
+          <div class="success-detail"><span>📅</span><span id="confirmSlot">Saturday · 11:00 AM</span></div>
+          <div class="success-detail"><span>📞</span><span>Counsellor call within 30 minutes</span></div>
+          <div class="success-detail"><span>🌐</span><span>Class link will be sent via WhatsApp & Email</span></div>
+        </div>
+        <a href="index.html" class="btn btn-primary btn-lg" style="display:block;margin-bottom:12px;">← Back to Home</a>
+        <a href="programs.html" class="btn btn-outline btn-lg" style="display:block;">Explore More Programs</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="position:relative;z-index:1;">
+  <div class="footer-bottom-simple">
+    <a href="index.html" style="font-family:'Baloo 2',cursive;font-size:1.3rem;color:#fff;text-decoration:none;">Leap<span style="color:var(--coral);">Kids</span> 🚀</a>
+    <div class="footer-links">
+      <a href="programs.html">Programs</a>
+      <a href="assessment.html">Assessment</a>
+      <a href="login.html">Login</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+    <span>© 2025 LeapKids 🇮🇳</span>
+  </div>
+</footer>
+
+<script>
+let selectedProgram = 'Coding';
+let selectedDay = 'Saturday';
+let selectedTime = '11:00 AM';
+let currentStep = 1;
+
+function nextStep(from){
+  if(from===1){
+    const n=document.getElementById('childName').value;
+    const a=document.getElementById('childAge').value;
+    const p=document.getElementById('parentName').value;
+    const ph=document.getElementById('parentPhone').value;
+    if(!n||!a||!p||!ph){alert('Please fill in all required fields!');return;}
+  }
+  document.getElementById('step'+from).classList.remove('active');
+  const next=from+1;
+  document.getElementById('step'+next).classList.add('active');
+  document.getElementById('dot'+from).className='step-dot done';
+  document.getElementById('dot'+from).textContent='✓';
+  document.getElementById('line'+from).classList.add('done');
+  document.getElementById('dot'+next).className='step-dot active';
+  currentStep=next;
+}
+function prevStep(from){
+  document.getElementById('step'+from).classList.remove('active');
+  const prev=from-1;
+  document.getElementById('step'+prev).classList.add('active');
+  document.getElementById('dot'+from).className='step-dot pending';
+  document.getElementById('dot'+from).textContent=from;
+  document.getElementById('line'+(from-1)).classList.remove('done');
+  document.getElementById('dot'+prev).className='step-dot active';
+  currentStep=prev;
+}
+function selectProgram(el,name){
+  document.querySelectorAll('.prog-option').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedProgram=name;
+}
+function selectSlot(el){
+  el.closest('.slot-grid').querySelectorAll('.slot-btn').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDay=el.querySelector('.slot-time').textContent;
+}
+function selectTime(el){
+  el.closest('.slot-grid').querySelectorAll('.slot-btn').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTime=el.querySelector('.slot-time').textContent;
+}
+// ─────────────────────────────────────────────
+//  GOOGLE APPS SCRIPT — LeapKids Book Demo
+// ─────────────────────────────────────────────
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkZMcFml9_mwm2vG5hOJl23HOZgmOuUQlnT4Fq6pULa_nkWf5kv8qEVg2JNjnxcA4Q/exec';
+
+async function submitForm() {
+  const submitBtn = document.querySelector('.form-submit-btn');
+
+  // ── Collect all field values ──
+  const formData = {
+    form_type:        'demo',
+    child_name:       document.getElementById('childName').value.trim(),
+    child_age:        document.getElementById('childAge').value,
+    child_grade:      document.getElementById('childGrade').value,
+    parent_name:      document.getElementById('parentName').value.trim(),
+    parent_phone:     document.getElementById('parentPhone').value.trim(),
+    parent_email:     document.getElementById('parentEmail').value.trim(),
+    city:             document.getElementById('city').value,
+    program_selected: selectedProgram,
+    experience_level: document.getElementById('experience').value,
+    language_pref:    document.getElementById('language').value,
+    preferred_day:    selectedDay,
+    preferred_time:   selectedTime,
+    submitted_at:     new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    source_page:      'Book Demo Form — LeapKids Website'
+  };
+
+  // ── Validation ──
+  if (!formData.child_name || !formData.parent_phone) {
+    alert('Please fill in the child name and parent phone number before submitting.');
+    return;
+  }
+
+  // ── Show loading ──
+  submitBtn.disabled = true;
+  submitBtn.textContent = '⏳ Sending your details...';
+
+  try {
+    // Google Apps Script requires no-cors — data is sent & saved,
+    // we just can't read the response (that's normal & expected)
+    await fetch(SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(formData)
+    });
+
+    // ── Show success screen ──
+    document.getElementById('confirmName').textContent    = formData.child_name;
+    document.getElementById('confirmProgram').textContent = formData.program_selected + ' Program';
+    document.getElementById('confirmSlot').textContent    = formData.preferred_day + ' · ' + formData.preferred_time;
+    document.getElementById('step3').classList.remove('active');
+    document.getElementById('dot3').className   = 'step-dot done';
+    document.getElementById('dot3').textContent = '✓';
+    document.getElementById('line2').classList.add('done');
+    document.getElementById('successState').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (err) {
+    alert('Network error. Please check your internet connection and try again.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = '🎓 Confirm My FREE Trial Class!';
+  }
+}
+
+document.getElementById('mm').querySelectorAll('a').forEach(a => a.addEventListener('click', () => document.getElementById('mm').classList.remove('open')));
+</script>
+</body>
+</html>

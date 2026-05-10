@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Programs — LeapKids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--yellow:#FFD93D;--coral:#FF6B6B;--teal:#4ECDC4;--navy:#1A1F5E;--purple:#7C5CBF;--green:#6BCB77;--orange:#FF8E53;--white:#FFFFFF;--light-bg:#F8F9FF;--text:#2D2D44;--muted:#6B7280;--card-shadow:0 8px 32px rgba(26,31,94,0.10);--radius:24px;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;color:var(--text);background:var(--light-bg);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(26,31,94,0.035) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+nav{display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:var(--white);box-shadow:0 2px 20px rgba(26,31,94,0.08);position:sticky;top:0;z-index:1000;}
+.logo{font-family:'Baloo 2',cursive;font-size:1.75rem;color:var(--navy);text-decoration:none;}.logo span{color:var(--coral);}
+.nav-links{display:flex;gap:20px;list-style:none;align-items:center;}
+.nav-links a{text-decoration:none;color:var(--text);font-weight:700;font-size:0.88rem;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--coral);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.hamburger span{width:24px;height:3px;background:var(--navy);border-radius:3px;display:block;}
+.mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;background:var(--white);padding:20px 5vw 28px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:999;flex-direction:column;gap:2px;}
+.mobile-menu a{text-decoration:none;color:var(--text);font-weight:700;font-size:1rem;padding:12px 0;border-bottom:1px solid #f0f0f4;display:block;}
+.mobile-menu.open{display:flex;}
+.btn{display:inline-block;padding:12px 26px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;cursor:pointer;border:none;transition:transform 0.18s,box-shadow 0.18s;text-decoration:none;text-align:center;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.18);}
+.btn-primary{background:var(--coral);color:#fff;}.btn-yellow{background:var(--yellow);color:var(--navy);}.btn-outline{background:transparent;border:2.5px solid var(--navy);color:var(--navy);}
+.btn-lg{padding:15px 36px;font-size:1.05rem;}
+section{padding:70px 5vw;position:relative;z-index:1;}
+.section-tag{display:inline-block;font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--coral);background:#fff0f0;padding:5px 14px;border-radius:50px;margin-bottom:12px;}
+.section-title{font-family:'Baloo 2',cursive;font-size:clamp(1.7rem,3vw,2.5rem);color:var(--navy);line-height:1.2;margin-bottom:12px;}
+.section-sub{font-size:1rem;color:var(--muted);font-weight:600;line-height:1.65;}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.55s,transform 0.55s;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,#EEF0FF 0%,#FFF5F5 60%,#F0FFFE 100%);padding:60px 5vw 50px;text-align:center;position:relative;overflow:hidden;}
+.page-hero::before{content:'🎓';position:absolute;font-size:14rem;opacity:0.05;top:-30px;right:3%;pointer-events:none;}
+.page-hero h1{font-family:'Baloo 2',cursive;font-size:clamp(2rem,4vw,3.2rem);color:var(--navy);margin-bottom:14px;animation:fadeUp 0.7s ease both;}
+.page-hero h1 span{color:var(--coral);}
+.page-hero p{font-size:1.05rem;color:var(--muted);font-weight:600;max-width:560px;margin:0 auto 28px;line-height:1.7;animation:fadeUp 0.7s 0.1s ease both;}
+.page-hero .hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fadeUp 0.7s 0.2s ease both;}
+.breadcrumb{font-size:0.82rem;color:var(--muted);font-weight:700;margin-bottom:16px;}
+.breadcrumb a{color:var(--coral);text-decoration:none;}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px;}
+.filter-tab{padding:9px 20px;border-radius:50px;font-weight:800;font-size:0.85rem;cursor:pointer;border:2.5px solid transparent;background:var(--white);color:var(--muted);transition:all 0.2s;box-shadow:var(--card-shadow);}
+.filter-tab.active,.filter-tab:hover{background:var(--navy);color:#fff;border-color:var(--navy);}
+
+/* BIG PROGRAM CARDS */
+.program-cards{display:flex;flex-direction:column;gap:36px;}
+.prog-big-card{background:var(--white);border-radius:28px;overflow:hidden;box-shadow:var(--card-shadow);display:flex;transition:transform 0.22s,box-shadow 0.22s;}
+.prog-big-card:hover{transform:translateY(-5px);box-shadow:0 20px 52px rgba(26,31,94,0.15);}
+.prog-side{width:260px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 24px;text-align:center;position:relative;}
+.prog-big-icon{font-size:5rem;margin-bottom:14px;display:block;}
+.prog-side-title{font-family:'Baloo 2',cursive;font-size:1.5rem;color:#fff;margin-bottom:6px;}
+.prog-side-sub{font-size:0.82rem;color:rgba(255,255,255,0.75);font-weight:600;}
+.prog-side-badge{margin-top:16px;background:rgba(255,255,255,0.2);border-radius:50px;padding:5px 14px;font-size:0.75rem;font-weight:800;color:#fff;}
+.prog-body{flex:1;padding:32px 36px;}
+.prog-body-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
+.prog-body h2{font-family:'Baloo 2',cursive;font-size:1.6rem;color:var(--navy);}
+.prog-meta-row{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:20px;}
+.prog-meta-item{display:flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700;color:var(--muted);}
+.prog-desc{font-size:0.95rem;color:var(--muted);line-height:1.7;font-weight:600;margin-bottom:20px;}
+.prog-modules-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.prog-module-item{display:flex;align-items:center;gap:10px;font-size:0.88rem;font-weight:700;color:var(--text);}
+.prog-module-item .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.prog-pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px;}
+.pill{font-size:0.72rem;font-weight:800;padding:4px 11px;border-radius:50px;}
+.prog-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+.coding-card .prog-side{background:linear-gradient(135deg,var(--coral),var(--orange));}
+.robotics-card .prog-side{background:linear-gradient(135deg,var(--teal),#2aaba0);}
+.finance-card .prog-side{background:linear-gradient(135deg,var(--yellow),var(--orange));}
+.finance-card .prog-side-title,.finance-card .prog-side-sub,.finance-card .prog-side-badge{color:var(--navy) !important;}
+.finance-card .prog-side-badge{background:rgba(26,31,94,0.15);}
+
+.coding-pill{background:#fff0f0;color:var(--coral);}
+.robotics-pill{background:#edfafa;color:#2aaba0;}
+.finance-pill{background:#fffbea;color:#c49a00;}
+
+/* AGE FILTER */
+.age-selector{background:var(--white);}
+.age-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.age-card{border-radius:20px;padding:26px 20px;text-align:center;box-shadow:var(--card-shadow);transition:transform 0.2s;cursor:pointer;border:2.5px solid transparent;}
+.age-card:hover{transform:translateY(-5px);}
+.age-card:nth-child(1){background:linear-gradient(135deg,#FFF0F0,#FFE0E0);border-color:var(--coral);}
+.age-card:nth-child(2){background:linear-gradient(135deg,#EDFAFA,#B2EBE8);border-color:var(--teal);}
+.age-card:nth-child(3){background:linear-gradient(135deg,#F3EEFF,#DDD0F5);border-color:var(--purple);}
+.age-card:nth-child(4){background:linear-gradient(135deg,#FFFBEA,#FFE082);border-color:var(--yellow);}
+.age-face{font-size:3rem;margin-bottom:10px;display:block;}
+.age-range{font-family:'Baloo 2',cursive;font-size:1.3rem;color:var(--navy);}
+.age-label{font-size:0.78rem;font-weight:700;color:var(--muted);margin-bottom:12px;}
+.age-programs{font-size:0.78rem;font-weight:800;color:var(--navy);}
+
+/* COMPARE TABLE */
+.compare-table{width:100%;border-collapse:collapse;border-radius:20px;overflow:hidden;box-shadow:var(--card-shadow);}
+.compare-table th{background:var(--navy);color:#fff;padding:16px 20px;text-align:left;font-size:0.88rem;font-weight:800;}
+.compare-table td{padding:14px 20px;border-bottom:1px solid #f0f0f8;font-size:0.88rem;font-weight:600;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:nth-child(even) td{background:#fafbff;}
+.tick{color:var(--green);font-size:1.1rem;font-weight:900;}
+.cross{color:#ccc;font-size:1.1rem;}
+
+/* BUNDLE CARD */
+.bundle-section{background:var(--navy);text-align:center;}
+.bundle-section .section-tag{background:rgba(255,217,61,0.2);color:var(--yellow);}
+.bundle-section .section-title{color:#fff;}
+.bundle-section .section-sub{color:rgba(255,255,255,0.6);}
+.bundle-card{background:rgba(255,255,255,0.07);border:2px solid var(--yellow);border-radius:28px;padding:40px;max-width:700px;margin:40px auto 0;position:relative;}
+.bundle-badge-top{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--yellow);color:var(--navy);font-size:0.8rem;font-weight:800;padding:5px 20px;border-radius:50px;white-space:nowrap;}
+.bundle-icons{display:flex;justify-content:center;gap:20px;font-size:3rem;margin-bottom:20px;}
+.bundle-price{font-family:'Baloo 2',cursive;font-size:3rem;color:#fff;margin-bottom:4px;}
+.bundle-price span{font-size:1.2rem;font-family:'Nunito',sans-serif;font-weight:600;}
+.bundle-old{font-size:1.1rem;color:rgba(255,255,255,0.4);text-decoration:line-through;font-weight:700;margin-bottom:20px;}
+.bundle-features{display:flex;flex-direction:column;gap:10px;margin:24px 0;text-align:left;max-width:400px;margin-left:auto;margin-right:auto;}
+.bundle-feat{display:flex;align-items:center;gap:10px;font-size:0.9rem;font-weight:700;color:rgba(255,255,255,0.85);}
+.bundle-feat::before{content:'✓';color:var(--yellow);font-weight:900;flex-shrink:0;}
+
+/* CTA */
+.page-cta{background:linear-gradient(135deg,var(--coral),var(--orange));text-align:center;padding:70px 5vw;}
+.page-cta h2{font-family:'Baloo 2',cursive;font-size:clamp(1.8rem,3vw,2.6rem);color:#fff;margin-bottom:12px;}
+.page-cta p{color:rgba(255,255,255,0.85);font-size:1rem;font-weight:600;margin-bottom:30px;}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:48px 5vw 24px;position:relative;z-index:1;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:36px;}
+.footer-logo{font-family:'Baloo 2',cursive;font-size:1.5rem;color:#fff;text-decoration:none;display:block;margin-bottom:10px;}.footer-logo span{color:var(--coral);}
+.footer-col h5{color:#fff;font-size:0.84rem;font-weight:800;margin-bottom:12px;text-transform:uppercase;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col a{color:rgba(255,255,255,0.55);text-decoration:none;font-size:0.85rem;font-weight:600;transition:color 0.2s;}
+.footer-col a:hover{color:var(--yellow);}
+.footer-brand p{font-size:0.85rem;line-height:1.65;font-weight:600;margin-top:10px;}
+.footer-bottom-simple{border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:0.8rem;}
+
+@media(max-width:820px){
+  .nav-links{display:none;}.hamburger{display:flex;}
+  .prog-big-card{flex-direction:column;}
+  .prog-side{width:100%;padding:28px;}
+  .prog-body{padding:24px 20px;}
+  .age-grid{grid-template-columns:1fr 1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:480px){.footer-grid{grid-template-columns:1fr;}.footer-bottom-simple{flex-direction:column;text-align:center;}.age-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Leap<span>Kids</span> 🚀</a>
+  <ul class="nav-links">
+    <li><a href="programs.html" class="active">Programs</a></li>
+    <li><a href="coding.html">Coding</a></li>
+    <li><a href="robotics.html">Robotics</a></li>
+    <li><a href="finance.html">Finance</a></li>
+    <li><a href="assessment.html">Assessment</a></li>
+    <li><a href="login.html" class="btn btn-outline" style="padding:8px 20px">Login</a></li>
+    <li><a href="book-demo.html" class="btn btn-primary">Book Free Class</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mm">
+  <a href="programs.html">📚 All Programs</a><a href="coding.html">💻 Coding</a><a href="robotics.html">🤖 Robotics</a><a href="finance.html">💰 Finance</a><a href="assessment.html">🎯 Assessment</a><a href="login.html">👤 Login</a><a href="book-demo.html">🎓 Book FREE Trial →</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> → All Programs</div>
+  <h1>Explore All <span>Programs</span> 🎓</h1>
+  <p>Three world-class programs designed for school kids aged 6–18. Pick one or bundle all three and give your child the ultimate future-skills advantage.</p>
+  <div class="hero-cta">
+    <a href="book-demo.html" class="btn btn-primary btn-lg">🎓 Book FREE Trial Class</a>
+    <a href="assessment.html" class="btn btn-outline btn-lg">🎯 Find My Level</a>
+  </div>
+</div>
+
+<!-- PROGRAMS -->
+<section style="background:var(--light-bg);">
+  <div class="fade-in" style="text-align:center;margin-bottom:40px;">
+    <div class="section-tag">Our Programs</div>
+    <h2 class="section-title">Choose What Your Child Wants to Learn</h2>
+    <p class="section-sub" style="max-width:520px;margin:0 auto;">All programs are live, mentor-led, project-based and designed specifically for school kids.</p>
+  </div>
+
+  <div class="program-cards fade-in">
+
+    <!-- CODING -->
+    <div class="prog-big-card coding-card">
+      <div class="prog-side">
+        <span class="prog-big-icon">💻</span>
+        <div class="prog-side-title">Coding</div>
+        <div class="prog-side-sub">Ages 6–18 · 22 Weeks</div>
+        <div class="prog-side-badge">⭐ Most Popular</div>
+      </div>
+      <div class="prog-body">
+        <div class="prog-body-header">
+          <h2>Coding & Programming</h2>
+          <div style="background:#fff0f0;border-radius:12px;padding:8px 16px;text-align:center;flex-shrink:0;">
+            <div style="font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--coral);">₹999<span style="font-size:0.8rem;font-family:'Nunito',sans-serif;">/mo</span></div>
+            <div style="font-size:0.7rem;color:var(--muted);font-weight:700;">Starter Plan</div>
+          </div>
+        </div>
+        <div class="prog-meta-row">
+          <div class="prog-meta-item">⏱ 45–60 min/class</div>
+          <div class="prog-meta-item">👥 Max 8 kids/batch</div>
+          <div class="prog-meta-item">📅 4 classes/month</div>
+          <div class="prog-meta-item">🗣️ Hindi & English</div>
+        </div>
+        <p class="prog-desc">From Scratch to Python, Web Dev and App building — kids learn by creating real games, websites and apps through guided, project-based sessions with expert mentors.</p>
+        <div class="prog-modules-list">
+          <div class="prog-module-item"><span class="dot" style="background:var(--coral)"></span>Module 1: Scratch & Block Coding (Weeks 1–4)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--orange)"></span>Module 2: Python Fundamentals (Weeks 5–10)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--purple)"></span>Module 3: Web Development (Weeks 11–16)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--green)"></span>Module 4: App Development (Weeks 17–22)</div>
+        </div>
+        <div class="prog-pills">
+          <span class="pill coding-pill">Scratch</span><span class="pill coding-pill">Python</span><span class="pill coding-pill">HTML/CSS</span><span class="pill coding-pill">JavaScript</span><span class="pill coding-pill">React Basics</span>
+        </div>
+        <div class="prog-actions">
+          <a href="coding.html" class="btn btn-primary">View Full Curriculum →</a>
+          <a href="book-demo.html" class="btn btn-outline">Book Free Class</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROBOTICS -->
+    <div class="prog-big-card robotics-card">
+      <div class="prog-side">
+        <span class="prog-big-icon">🤖</span>
+        <div class="prog-side-title">Robotics</div>
+        <div class="prog-side-sub">Ages 8–18 · 24 Weeks</div>
+        <div class="prog-side-badge">📦 Kit Included</div>
+      </div>
+      <div class="prog-body">
+        <div class="prog-body-header">
+          <h2>Robotics & AI</h2>
+          <div style="background:#edfafa;border-radius:12px;padding:8px 16px;text-align:center;flex-shrink:0;">
+            <div style="font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--teal);">₹1,499<span style="font-size:0.8rem;font-family:'Nunito',sans-serif;">/mo</span></div>
+            <div style="font-size:0.7rem;color:var(--muted);font-weight:700;">Includes Kit</div>
+          </div>
+        </div>
+        <div class="prog-meta-row">
+          <div class="prog-meta-item">⏱ 60 min/class</div>
+          <div class="prog-meta-item">👥 Max 6 kids/batch</div>
+          <div class="prog-meta-item">📅 4 classes/month</div>
+          <div class="prog-meta-item">📦 Kit Delivered</div>
+        </div>
+        <p class="prog-desc">Build real robots and explore AI — with a complete hardware kit delivered to your home! Kids learn electronics, programming, IoT and computer vision through hands-on projects.</p>
+        <div class="prog-modules-list">
+          <div class="prog-module-item"><span class="dot" style="background:var(--teal)"></span>Module 1: Electronics & Circuits (Weeks 1–5)</div>
+          <div class="prog-module-item"><span class="dot" style="background:#2aaba0)"></span>Module 2: Build Your First Robot (Weeks 6–12)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--purple)"></span>Module 3: IoT & Smart Systems (Weeks 13–18)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--green)"></span>Module 4: AI & Computer Vision (Weeks 19–24)</div>
+        </div>
+        <div class="prog-pills">
+          <span class="pill robotics-pill">Arduino</span><span class="pill robotics-pill">Sensors</span><span class="pill robotics-pill">IoT</span><span class="pill robotics-pill">AI & ML</span><span class="pill robotics-pill">Computer Vision</span>
+        </div>
+        <div class="prog-actions">
+          <a href="robotics.html" class="btn btn-teal" style="background:var(--teal);color:#fff;">View Full Curriculum →</a>
+          <a href="book-demo.html" class="btn btn-outline">Book Free Class</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINANCE -->
+    <div class="prog-big-card finance-card">
+      <div class="prog-side">
+        <span class="prog-big-icon">💰</span>
+        <div class="prog-side-title" style="color:var(--navy)">Finance</div>
+        <div class="prog-side-sub" style="color:rgba(26,31,94,0.65)">Ages 6–18 · 20 Weeks</div>
+        <div class="prog-side-badge">🌟 Life Skills</div>
+      </div>
+      <div class="prog-body">
+        <div class="prog-body-header">
+          <h2>Financial Literacy</h2>
+          <div style="background:#fffbea;border-radius:12px;padding:8px 16px;text-align:center;flex-shrink:0;">
+            <div style="font-family:'Baloo 2',cursive;font-size:1.4rem;color:#c49a00;">₹799<span style="font-size:0.8rem;font-family:'Nunito',sans-serif;">/mo</span></div>
+            <div style="font-size:0.7rem;color:var(--muted);font-weight:700;">Starter Plan</div>
+          </div>
+        </div>
+        <div class="prog-meta-row">
+          <div class="prog-meta-item">⏱ 45 min/class</div>
+          <div class="prog-meta-item">👥 Max 10 kids/batch</div>
+          <div class="prog-meta-item">📅 4 classes/month</div>
+          <div class="prog-meta-item">🎮 Game-based</div>
+        </div>
+        <p class="prog-desc">Teach kids to save, budget, invest and think entrepreneurially through games, simulations and real projects — the money skills school forgets but life always demands.</p>
+        <div class="prog-modules-list">
+          <div class="prog-module-item"><span class="dot" style="background:var(--yellow)"></span>Module 1: Money Basics & Banking (Weeks 1–4)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--orange)"></span>Module 2: Saving & Budgeting (Weeks 5–9)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--green)"></span>Module 3: Investing Basics (Weeks 10–15)</div>
+          <div class="prog-module-item"><span class="dot" style="background:var(--purple)"></span>Module 4: Entrepreneurship (Weeks 16–20)</div>
+        </div>
+        <div class="prog-pills">
+          <span class="pill finance-pill">Budgeting</span><span class="pill finance-pill">Saving</span><span class="pill finance-pill">Investing</span><span class="pill finance-pill">Stocks</span><span class="pill finance-pill">Business</span>
+        </div>
+        <div class="prog-actions">
+          <a href="finance.html" class="btn btn-yellow">View Full Curriculum →</a>
+          <a href="book-demo.html" class="btn btn-outline">Book Free Class</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AGE GROUPS -->
+<section class="age-selector">
+  <div class="fade-in" style="text-align:center;margin-bottom:40px;">
+    <div class="section-tag">By Age Group</div>
+    <h2 class="section-title">Find the Right Program by Age 👧🧒</h2>
+  </div>
+  <div class="age-grid fade-in">
+    <div class="age-card" onclick="window.location='assessment.html'">
+      <span class="age-face">😊</span>
+      <div class="age-range">6 – 8 yrs</div>
+      <div class="age-label">Little Explorers</div>
+      <div class="age-programs">Scratch Coding · Finance Basics</div>
+    </div>
+    <div class="age-card" onclick="window.location='assessment.html'">
+      <span class="age-face">😄</span>
+      <div class="age-range">9 – 11 yrs</div>
+      <div class="age-label">Builders</div>
+      <div class="age-programs">Python · Robotics Intro · Budgeting</div>
+    </div>
+    <div class="age-card" onclick="window.location='assessment.html'">
+      <span class="age-face">🤩</span>
+      <div class="age-range">12 – 14 yrs</div>
+      <div class="age-label">Innovators</div>
+      <div class="age-programs">Web Dev · IoT · Investing</div>
+    </div>
+    <div class="age-card" onclick="window.location='assessment.html'">
+      <span class="age-face">😎</span>
+      <div class="age-range">15 – 18 yrs</div>
+      <div class="age-label">Future Leaders</div>
+      <div class="age-programs">Apps · AI Vision · Entrepreneurship</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section style="background:var(--light-bg);">
+  <div class="fade-in" style="text-align:center;margin-bottom:40px;">
+    <div class="section-tag">Compare Plans</div>
+    <h2 class="section-title">Which Plan is Right for You? 🤔</h2>
+  </div>
+  <div class="fade-in" style="overflow-x:auto;">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>💻 Coding</th>
+          <th>🤖 Robotics</th>
+          <th>💰 Finance</th>
+          <th>🌟 All 3 Bundle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Monthly Price</strong></td><td>₹999/mo</td><td>₹1,499/mo</td><td>₹799/mo</td><td><strong>₹1,999/mo</strong></td></tr>
+        <tr><td>Live Classes/month</td><td>4</td><td>4</td><td>4</td><td><strong>8+</strong></td></tr>
+        <tr><td>Age Range</td><td>6–18</td><td>8–18</td><td>6–18</td><td>6–18</td></tr>
+        <tr><td>Duration</td><td>22 weeks</td><td>24 weeks</td><td>20 weeks</td><td>All programs</td></tr>
+        <tr><td>Recorded Replay</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+        <tr><td>Hardware Kit Delivery</td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td></tr>
+        <tr><td>1-on-1 Doubt Sessions</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td></tr>
+        <tr><td>Parent Dashboard</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+        <tr><td>Certificate</td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td></tr>
+        <tr><td>Hackathon Access</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="tick">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- BUNDLE -->
+<section class="bundle-section">
+  <div class="fade-in" style="text-align:center;">
+    <div class="section-tag">Best Value</div>
+    <h2 class="section-title">Get All 3 Programs — Save 40%! 🎉</h2>
+    <p class="section-sub" style="max-width:500px;margin:0 auto;color:rgba(255,255,255,0.6);">The Explorer Bundle gives your child unlimited access to all three programs, mentor sessions, all kits and priority support.</p>
+  </div>
+  <div class="bundle-card fade-in">
+    <div class="bundle-badge-top">⭐ Most Popular · Best Value</div>
+    <div class="bundle-icons">💻 🤖 💰</div>
+    <div class="bundle-price">₹1,999<span>/mo</span></div>
+    <div class="bundle-old">Worth ₹3,297/mo individually</div>
+    <div class="bundle-features">
+      <div class="bundle-feat">All 3 programs — Coding, Robotics & Finance</div>
+      <div class="bundle-feat">8+ live classes every month</div>
+      <div class="bundle-feat">Robotics hardware kit delivered home</div>
+      <div class="bundle-feat">1-on-1 monthly doubt clearing session</div>
+      <div class="bundle-feat">Real-time parent progress dashboard</div>
+      <div class="bundle-feat">Hackathon & competition access</div>
+      <div class="bundle-feat">Globally verifiable certificates for all 3</div>
+    </div>
+    <a href="book-demo.html" class="btn btn-yellow btn-lg">🎓 Start FREE Trial Now</a>
+  </div>
+</section>
+
+<div class="page-cta">
+  <h2>Not Sure Where to Start? Take the Free Assessment! 🎯</h2>
+  <p>Our 10-minute assessment helps us recommend the perfect program and level for your child.</p>
+  <div class="cta-row">
+    <a href="assessment.html" class="btn btn-yellow btn-lg">🎯 Take Free Assessment</a>
+    <a href="book-demo.html" class="btn" style="background:rgba(255,255,255,0.2);color:#fff;padding:15px 36px;font-size:1.05rem;font-weight:800;border-radius:50px;text-decoration:none;">📞 Talk to a Counsellor</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="footer-logo">Leap<span>Kids</span> 🚀</a><p>Empowering school kids with coding, robotics & financial literacy. Trusted by 1000+ schools across India.</p></div>
+    <div class="footer-col"><h5>Programs</h5><ul><li><a href="coding.html">Coding</a></li><li><a href="robotics.html">Robotics</a></li><li><a href="finance.html">Finance</a></li><li><a href="programs.html">All Programs</a></li></ul></div>
+    <div class="footer-col"><h5>Quick Links</h5><ul><li><a href="assessment.html">Free Assessment</a></li><li><a href="book-demo.html">Book Demo</a></li><li><a href="login.html">Login</a></li><li><a href="#">About Us</a></li></ul></div>
+    <div class="footer-col"><h5>Support</h5><ul><li><a href="#">FAQs</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Contact Us</a></li><li><a href="#">Refund Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom-simple"><span>© 2025 LeapKids. Made with ❤️ in India 🇮🇳</span><span>Bengaluru · Mumbai · Delhi</span></div>
+</footer>
+<script>
+document.getElementById('mm').querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mm').classList.remove('open')));
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
