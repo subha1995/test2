@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="lk-bridge.js"></script>
+
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>All Programs — LeapKids</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
@@ -142,6 +144,18 @@ footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:48px 5vw 24px
   .footer-grid{grid-template-columns:1fr 1fr;}
 }
 @media(max-width:480px){.footer-grid{grid-template-columns:1fr;}.footer-bottom-simple{flex-direction:column;text-align:center;}.age-grid{grid-template-columns:1fr 1fr;}}
+
+/* ── Admin Announcement Banner ── */
+.lk-ann-banner{background:#eef3ff;border:1.5px solid #c7d4ff;border-radius:12px;padding:14px 20px;margin:0 auto 16px;max-width:1200px;display:flex;align-items:flex-start;gap:12px;animation:lkSlideDown .4s ease both;}
+@keyframes lkSlideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.lk-ann-icon{font-size:1.2rem;flex-shrink:0;}
+.lk-ann-body{flex:1;}
+.lk-ann-title{font-weight:800;font-size:0.88rem;color:#1A1F5E;margin-bottom:2px;}
+.lk-ann-msg{font-size:0.8rem;color:#4a5568;font-weight:600;line-height:1.5;}
+.lk-ann-close{background:none;border:none;font-size:1rem;cursor:pointer;opacity:0.5;padding:2px;}
+.lk-ann-close:hover{opacity:1;}
+#lkAnnWrap{width:100%;padding:0 20px;}
+
 </style>
 </head>
 <body>
@@ -154,7 +168,8 @@ footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:48px 5vw 24px
     <li><a href="finance.html">Finance</a></li>
     <li><a href="assessment.html">Assessment</a></li>
     <li><a href="login.html" class="btn btn-outline" style="padding:8px 20px">Login</a></li>
-    <li><a href="book-demo.html" class="btn btn-primary">Book Free Class</a></li>
+    <li><a href="leapkids-admin.html" style="background:var(--navy);color:#fff;padding:8px 18px;border-radius:50px;font-weight:800;font-size:0.82rem;text-decoration:none;">⚙ Admin</a>
+            <a href="book-demo.html" class="btn btn-primary">Book Free Class</a></li>
   </ul>
   <button class="hamburger" onclick="document.getElementById('mm').classList.toggle('open')"><span></span><span></span><span></span></button>
 </nav>
@@ -417,6 +432,22 @@ footer{background:var(--navy);color:rgba(255,255,255,0.65);padding:48px 5vw 24px
 document.getElementById('mm').querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>document.getElementById('mm').classList.remove('open')));
 const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');}),{threshold:0.1});
 document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+
+<script>
+// ── LeapKids LMS Bridge — read admin settings ──────────────────────────
+(function() {
+  if (!window.LKBridge) return;
+  // Apply admin-set pricing
+  const pricing = LKBridge.getPricing();
+  document.querySelectorAll('[data-plan-price]').forEach(el => {
+    const plan = el.getAttribute('data-plan-price');
+    if (pricing[plan]) el.textContent = '₹' + Number(pricing[plan]).toLocaleString('en-IN');
+  });
+  // Apply admin-set platform name
+  const settings = LKBridge.getSettings();
+  if (settings.name) document.querySelectorAll('[data-platform-name]').forEach(el => el.textContent = settings.name);
+})();
 </script>
 </body>
 </html>

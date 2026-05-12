@@ -537,10 +537,20 @@ function handleLogin(role) {
     );
 
   } else if (role === 'parent') {
-    localStorage.setItem('lk_role', 'parent');
-    showSuccess('👋','Welcome back, Parent!',
-      'You\'re now logged in. Your child\'s progress, classes and certificates are ready.',
-      'Go to Home →', 'index.html');
+    // Grab parent name from the login form input
+    const parentInput = document.querySelector('#parent-login input[type="text"]');
+    const parentRaw   = parentInput?.value.trim() || '';
+    let parentDisplay = parentRaw;
+    if (parentRaw.includes('@')) {
+      parentDisplay = parentRaw.split('@')[0].replace(/[._]/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    } else if (!parentRaw) {
+      parentDisplay = 'Parent';
+    }
+    localStorage.setItem('lk_role',        'parent');
+    localStorage.setItem('lk_parent_name',  parentDisplay);
+    showSuccess('👋', 'Welcome back! 👨‍👩‍👧',
+      'Logging you in… Taking you to your Parent Dashboard now.',
+      '📊 Go to Parent Dashboard →', 'parent-dashboard.html');
 
   } else if (role === 'school') {
     localStorage.setItem('lk_role', 'school');
@@ -635,6 +645,22 @@ async function handleSignup(role) {
       localStorage.setItem('lk_grade',  age ? 'Age ' + age + ' · LeapKids Student' : 'LeapKids Student');
       localStorage.setItem('lk_role',   'student');
       showSuccess(m.emoji, m.title, m.msg, m.btn, 'student-dashboard.html');
+
+    } else if (role === 'parent') {
+      // Save parent name + child name from the signup form
+      const pFirst    = document.querySelector('#parent-signup input[placeholder="Priya"]')?.value.trim()  || 'Parent';
+      const pLast     = document.querySelector('#parent-signup input[placeholder="Sharma"]')?.value.trim() || '';
+      const childName = document.querySelector('#parent-signup input[placeholder="Aarav"]')?.value.trim()  || 'Your Child';
+      const childAge  = document.querySelector('#parent-signup select')?.value || '';
+      localStorage.setItem('lk_role',        'parent');
+      localStorage.setItem('lk_parent_name',  (pFirst + ' ' + pLast).trim());
+      localStorage.setItem('lk_name',         childName);
+      localStorage.setItem('lk_avatar',       '😊');
+      localStorage.setItem('lk_grade',        childAge ? 'Age ' + childAge + ' · LeapKids Student' : 'LeapKids Student');
+      showSuccess('🎉', 'Account Created! 🎉',
+        'Welcome to LeapKids! Your parent dashboard is ready. Track ' + childName + '\'s progress, classes and badges all in one place.',
+        '📊 Go to Parent Dashboard →', 'parent-dashboard.html');
+
     } else {
       showSuccess(m.emoji, m.title, m.msg, m.btn, 'index.html');
     }

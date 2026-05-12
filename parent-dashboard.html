@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Dashboard — LeapKids</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --yellow:#FFD93D;--coral:#FF6B6B;--teal:#4ECDC4;--navy:#1A1F5E;
+  --purple:#7C5CBF;--green:#6BCB77;--orange:#FF8E53;
+  --white:#FFFFFF;--light-bg:#F8F9FF;--text:#2D2D44;--muted:#6B7280;
+  --sidebar-w:240px;--card-shadow:0 2px 16px rgba(26,31,94,0.07);--radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--light-bg);color:var(--text);overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(26,31,94,0.025) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0;}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--white);border-right:1px solid #eef0f8;display:flex;flex-direction:column;z-index:200;transition:transform 0.3s;overflow-y:auto;}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid #eef0f8;}
+.sidebar-logo a{font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--navy);text-decoration:none;}
+.sidebar-logo a span{color:var(--coral);}
+.sidebar-logo small{display:block;font-size:0.7rem;font-weight:700;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+
+.parent-info{padding:16px 20px;border-bottom:1px solid #eef0f8;background:linear-gradient(135deg,#F8F9FF,#fff);}
+.parent-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--navy),#2D3580);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:10px;}
+.parent-name{font-size:0.9rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.parent-role{font-size:0.72rem;color:var(--muted);font-weight:600;}
+.child-chip{display:flex;align-items:center;gap:8px;background:var(--light-bg);border-radius:10px;padding:8px 10px;margin-top:10px;border:1.5px solid #e8eaf8;}
+.child-chip-avatar{font-size:1.1rem;}
+.child-chip-name{font-size:0.78rem;font-weight:800;color:var(--navy);}
+.child-chip-grade{font-size:0.68rem;color:var(--muted);font-weight:600;}
+.child-chip-dot{width:7px;height:7px;border-radius:50%;background:var(--green);margin-left:auto;flex-shrink:0;}
+
+.nav-section-label{padding:12px 20px 5px;font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:10px;cursor:pointer;font-size:0.86rem;font-weight:700;color:var(--muted);text-decoration:none;transition:all 0.18s;}
+.nav-item:hover{background:var(--light-bg);color:var(--navy);}
+.nav-item.active{background:#fff0f0;color:var(--coral);}
+.nav-item .ni{font-size:1rem;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;background:var(--coral);color:#fff;font-size:0.6rem;font-weight:800;padding:2px 6px;border-radius:50px;}
+
+.sidebar-bottom{margin-top:auto;padding:12px 8px;border-top:1px solid #eef0f8;}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);min-height:100vh;position:relative;z-index:1;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--white);padding:13px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eef0f8;position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.menu-btn{display:none;background:none;border:none;font-size:1.3rem;cursor:pointer;padding:4px;}
+.page-title{font-family:'Baloo 2',cursive;font-size:1.25rem;color:var(--navy);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-btn{background:var(--light-bg);border:1.5px solid #e8eaf8;border-radius:10px;padding:7px 12px;font-size:0.78rem;font-weight:800;color:var(--navy);cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;transition:all 0.18s;}
+.topbar-btn:hover{border-color:var(--coral);color:var(--coral);}
+.notif-btn{width:36px;height:36px;border-radius:10px;background:var(--light-bg);border:1.5px solid #e8eaf8;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
+.notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--coral);border:1.5px solid var(--white);}
+
+/* ── CONTENT PAGES ── */
+.content{padding:26px 28px;display:none;}
+.content.active{display:block;}
+
+/* ── OVERVIEW PAGE ── */
+.child-banner{background:linear-gradient(135deg,var(--navy) 0%,#2D3580 100%);border-radius:var(--radius);padding:24px 28px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden;}
+.child-banner::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.05) 1px,transparent 1px);background-size:20px 20px;}
+.cb-left{display:flex;align-items:center;gap:16px;position:relative;z-index:1;}
+.cb-avatar{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;}
+.cb-name{font-family:'Baloo 2',cursive;font-size:1.4rem;color:#fff;margin-bottom:3px;}
+.cb-meta{font-size:0.8rem;color:rgba(255,255,255,0.6);font-weight:600;}
+.cb-tags{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap;}
+.cb-tag{background:rgba(255,255,255,0.12);border-radius:50px;padding:3px 10px;font-size:0.7rem;font-weight:800;color:rgba(255,255,255,0.85);}
+.cb-right{display:flex;gap:24px;position:relative;z-index:1;flex-shrink:0;}
+.cb-stat{text-align:center;}
+.cb-stat-num{font-family:'Baloo 2',cursive;font-size:1.6rem;color:#fff;}
+.cb-stat-lbl{font-size:0.68rem;color:rgba(255,255,255,0.5);font-weight:700;margin-top:1px;}
+
+.overview-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px;}
+.stat-tile{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:14px;}
+.st-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.st-val{font-family:'Baloo 2',cursive;font-size:1.5rem;color:var(--navy);line-height:1;}
+.st-lbl{font-size:0.72rem;color:var(--muted);font-weight:700;margin-top:2px;}
+.st-delta{font-size:0.68rem;font-weight:800;margin-top:4px;}
+.delta-up{color:var(--green);}
+.delta-warn{color:var(--orange);}
+
+.two-col{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:22px;}
+.card{background:var(--white);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--card-shadow);}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-size:0.9rem;font-weight:800;color:var(--navy);}
+.card-link{font-size:0.75rem;font-weight:800;color:var(--coral);text-decoration:none;cursor:pointer;}
+
+/* PROGRESS BARS */
+.prog-list{display:flex;flex-direction:column;gap:14px;}
+.prog-row{}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.prog-name{font-size:0.82rem;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:6px;}
+.prog-pct{font-size:0.75rem;font-weight:800;color:var(--muted);}
+.prog-bar{height:7px;background:var(--light-bg);border-radius:50px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:50px;transition:width 1s ease;}
+.pf-coral{background:linear-gradient(90deg,var(--coral),var(--orange));}
+.pf-teal{background:linear-gradient(90deg,var(--teal),#2aaba0);}
+.pf-yellow{background:linear-gradient(90deg,var(--yellow),var(--orange));}
+
+/* NEXT CLASS */
+.class-list{display:flex;flex-direction:column;gap:9px;}
+.class-row{display:flex;gap:11px;align-items:center;padding:11px;background:var(--light-bg);border-radius:11px;}
+.class-color{width:4px;border-radius:4px;align-self:stretch;flex-shrink:0;}
+.class-info{flex:1;}
+.class-name{font-size:0.82rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.class-meta{font-size:0.72rem;color:var(--muted);font-weight:600;}
+.class-status{font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:50px;white-space:nowrap;}
+
+/* ATTENDANCE WEEK */
+.attend-week{display:flex;gap:6px;margin-bottom:4px;}
+.attend-day{flex:1;text-align:center;}
+.attend-day-name{font-size:0.6rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;}
+.attend-circle{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;}
+.ac-present{background:#e8fff0;color:var(--green);}
+.ac-absent{background:#fff0f0;color:var(--coral);}
+.ac-na{background:var(--light-bg);color:var(--muted);}
+
+/* ALERTS */
+.alerts-list{display:flex;flex-direction:column;gap:9px;}
+.alert-item{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:12px;border-left:3.5px solid transparent;}
+.alert-item.info{background:#EEF0FF;border-color:var(--navy);}
+.alert-item.warn{background:#FFF9E6;border-color:var(--yellow);}
+.alert-item.good{background:#E8FFF0;border-color:var(--green);}
+.alert-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.alert-text{flex:1;}
+.alert-title{font-size:0.82rem;font-weight:800;color:var(--navy);margin-bottom:2px;}
+.alert-sub{font-size:0.73rem;color:var(--muted);font-weight:600;line-height:1.5;}
+.alert-time{font-size:0.68rem;color:var(--muted);font-weight:600;white-space:nowrap;margin-top:2px;}
+
+/* ── PROGRESS DETAIL ── */
+.module-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;}
+.module-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--card-shadow);border-top:4px solid transparent;}
+.mc-icon{font-size:1.8rem;margin-bottom:10px;}
+.mc-course{font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:4px;}
+.mc-title{font-size:0.92rem;font-weight:800;color:var(--navy);margin-bottom:12px;}
+.mc-progress{height:7px;background:var(--light-bg);border-radius:50px;overflow:hidden;margin-bottom:8px;}
+.mc-fill{height:100%;border-radius:50px;}
+.mc-stats{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);font-weight:700;}
+.mc-last{font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:8px;}
+.mc-mentor{display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid #f0f0f8;}
+.mc-mentor-face{font-size:1.1rem;}
+.mc-mentor-name{font-size:0.75rem;font-weight:700;color:var(--navy);}
+.mc-mentor-role{font-size:0.68rem;color:var(--muted);font-weight:600;}
+
+.badges-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+.badge-pill{display:flex;align-items:center;gap:7px;background:var(--white);border-radius:50px;padding:8px 14px;box-shadow:var(--card-shadow);}
+.badge-emoji{font-size:1.1rem;}
+.badge-pill-name{font-size:0.78rem;font-weight:800;color:var(--navy);}
+.badge-pill-date{font-size:0.68rem;color:var(--muted);font-weight:600;}
+
+/* ── TEACHERS ── */
+.teachers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+.teacher-card{background:var(--white);border-radius:var(--radius);padding:22px;box-shadow:var(--card-shadow);transition:transform 0.18s;cursor:default;}
+.teacher-card:hover{transform:translateY(-3px);}
+.tc-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+.tc-avatar{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
+.tc-name{font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:3px;}
+.tc-subject{font-size:0.78rem;font-weight:700;color:var(--muted);margin-bottom:6px;}
+.tc-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.tc-pill{font-size:0.65rem;font-weight:800;padding:2px 8px;border-radius:50px;}
+.tc-divider{border:none;border-top:1px solid #f0f0f8;margin:14px 0;}
+.tc-info-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.78rem;}
+.tc-info-label{color:var(--muted);font-weight:600;}
+.tc-info-val{color:var(--navy);font-weight:800;}
+.tc-rating{display:flex;align-items:center;gap:4px;}
+.tc-stars{color:var(--yellow);font-size:0.85rem;}
+.tc-rating-num{font-size:0.78rem;font-weight:800;color:var(--navy);}
+.tc-actions{display:flex;gap:8px;margin-top:14px;}
+.tc-btn{flex:1;padding:8px;border-radius:10px;border:1.5px solid #e8eaf8;background:var(--light-bg);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer;color:var(--navy);transition:all 0.18s;}
+.tc-btn:hover{border-color:var(--coral);color:var(--coral);background:#fff0f0;}
+.tc-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+.tc-btn.primary:hover{background:#2D3580;border-color:#2D3580;}
+
+/* ── EDIT PROFILE ── */
+.edit-layout{display:grid;grid-template-columns:280px 1fr;gap:20px;}
+.profile-card-left{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--card-shadow);height:fit-content;}
+.profile-avatar-big{width:72px;height:72px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;background:linear-gradient(135deg,var(--navy),#2D3580);margin:0 auto 16px;cursor:pointer;position:relative;}
+.avatar-edit-overlay{position:absolute;inset:0;border-radius:18px;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:#fff;}
+.profile-avatar-big:hover .avatar-edit-overlay{display:flex;}
+.avatar-picker{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:14px 0;}
+.av-btn{padding:8px;border-radius:10px;border:2px solid #e8eaf8;background:var(--light-bg);font-size:1.4rem;cursor:pointer;text-align:center;transition:all 0.18s;}
+.av-btn.selected,.av-btn:hover{border-color:var(--coral);background:#fff0f0;}
+.student-card-name{font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--navy);text-align:center;margin-bottom:4px;}
+.student-card-id{font-size:0.72rem;color:var(--muted);font-weight:600;text-align:center;margin-bottom:16px;}
+.profile-quick-stats{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid #f0f0f8;}
+.pqs-row{display:flex;justify-content:space-between;font-size:0.78rem;}
+.pqs-label{color:var(--muted);font-weight:600;}
+.pqs-val{color:var(--navy);font-weight:800;}
+
+.form-card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--card-shadow);}
+.form-section-title{font-size:0.82rem;font-weight:800;color:var(--navy);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #f0f0f8;display:flex;align-items:center;gap:7px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:0.78rem;font-weight:800;color:var(--navy);}
+.form-input{padding:10px 13px;border:1.5px solid #e8eaf8;border-radius:11px;font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:600;color:var(--text);background:var(--light-bg);transition:border-color 0.18s;outline:none;}
+.form-input:focus{border-color:var(--coral);background:#fff;}
+.form-input::placeholder{color:#b0b8c8;}
+select.form-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.save-btn{background:var(--coral);color:#fff;border:none;border-radius:50px;padding:11px 28px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;}
+.save-btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(255,107,107,0.35);}
+.save-row{display:flex;align-items:center;gap:14px;margin-top:20px;}
+.save-status{font-size:0.78rem;font-weight:700;color:var(--green);display:none;}
+
+/* ── HELP & SUPPORT ── */
+.help-hero{background:linear-gradient(135deg,#EEF0FF,#F0F8FF);border-radius:var(--radius);padding:24px 28px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+.hh-text h2{font-family:'Baloo 2',cursive;font-size:1.35rem;color:var(--navy);margin-bottom:5px;}
+.hh-text p{font-size:0.85rem;color:var(--muted);font-weight:600;line-height:1.6;}
+.hh-actions{display:flex;gap:10px;flex-shrink:0;}
+.hh-btn{padding:10px 18px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;border:none;transition:all 0.18s;text-decoration:none;display:inline-block;}
+.hh-btn.primary{background:var(--coral);color:#fff;}
+.hh-btn.primary:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(255,107,107,0.3);}
+.hh-btn.outline{background:var(--white);color:var(--navy);border:1.5px solid #e8eaf8;}
+.hh-btn.outline:hover{border-color:var(--navy);}
+
+.help-three{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;}
+.help-contact-card{background:var(--white);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--card-shadow);text-align:center;}
+.hcc-icon{font-size:2rem;margin-bottom:10px;}
+.hcc-title{font-size:0.88rem;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.hcc-sub{font-size:0.75rem;color:var(--muted);font-weight:600;line-height:1.5;margin-bottom:14px;}
+.hcc-btn{display:block;width:100%;padding:9px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.78rem;cursor:pointer;border:1.5px solid #e8eaf8;background:var(--light-bg);color:var(--navy);transition:all 0.18s;}
+.hcc-btn:hover{border-color:var(--coral);color:var(--coral);background:#fff0f0;}
+
+.faq-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.faq-item{background:var(--white);border-radius:12px;box-shadow:var(--card-shadow);overflow:hidden;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;font-size:0.88rem;font-weight:800;color:var(--navy);}
+.faq-arrow{font-size:0.8rem;color:var(--muted);transition:transform 0.25s;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s;}
+.faq-item.open .faq-a{max-height:200px;padding:0 18px 14px;}
+.faq-a p{font-size:0.83rem;color:var(--muted);font-weight:600;line-height:1.65;}
+
+.help-bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.tip-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--card-shadow);}
+.tip-card-title{font-size:0.85rem;font-weight:800;color:var(--navy);margin-bottom:12px;}
+.tip-list{display:flex;flex-direction:column;gap:8px;}
+.tip-item{display:flex;gap:9px;align-items:flex-start;}
+.tip-icon{font-size:0.9rem;flex-shrink:0;margin-top:1px;}
+.tip-text{font-size:0.8rem;color:var(--muted);font-weight:600;line-height:1.5;}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(26,31,94,0.4);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--white);border-radius:20px;padding:30px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(26,31,94,0.2);}
+@keyframes popIn{from{opacity:0;transform:scale(0.92) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-bg.open .modal{animation:popIn 0.22s ease both;}
+.modal-emoji{font-size:3.5rem;display:block;margin-bottom:12px;}
+.modal-title{font-family:'Baloo 2',cursive;font-size:1.5rem;color:var(--navy);margin-bottom:8px;}
+.modal-sub{font-size:0.88rem;color:var(--muted);font-weight:600;line-height:1.65;margin-bottom:22px;}
+.modal-actions{display:flex;gap:10px;justify-content:center;}
+.modal-btn{padding:10px 24px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;cursor:pointer;border:none;transition:all 0.18s;}
+.modal-btn.primary{background:var(--coral);color:#fff;}
+.modal-btn.primary:hover{transform:translateY(-1px);}
+.modal-btn.outline{background:var(--light-bg);color:var(--muted);border:1.5px solid #e8eaf8;}
+
+/* MOBILE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .menu-btn{display:block;}
+  .overview-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .module-cards{grid-template-columns:1fr;}
+  .teachers-grid{grid-template-columns:1fr;}
+  .edit-layout{grid-template-columns:1fr;}
+  .help-three{grid-template-columns:1fr;}
+  .help-bottom{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .content{padding:18px 16px;}
+  .hh-actions{flex-direction:column;}
+}
+@media(max-width:480px){
+  .overview-grid{grid-template-columns:1fr 1fr;}
+  .cb-right{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html">Leap<span>Kids</span> 🚀</a>
+    <small>Parent Portal</small>
+  </div>
+
+  <div class="parent-info">
+    <div class="parent-avatar" id="sideParentAvatar">👩‍👧</div>
+    <div class="parent-name" id="sideParentName">Priya Sharma</div>
+    <div class="parent-role">Parent Account</div>
+    <div class="child-chip">
+      <div class="child-chip-avatar" id="sideChildAvatar">😊</div>
+      <div>
+        <div class="child-chip-name" id="sideChildName">Aarav Sharma</div>
+        <div class="child-chip-grade">Class 7 · Active Student</div>
+      </div>
+      <div class="child-chip-dot"></div>
+    </div>
+  </div>
+
+  <div class="nav-section-label">Overview</div>
+  <a class="nav-item active" onclick="showPage('overview',this)"><span class="ni">🏠</span>Dashboard</a>
+  <a class="nav-item" onclick="showPage('progress',this)"><span class="ni">📊</span>Progress Report</a>
+  <a class="nav-item" onclick="showPage('teachers',this)"><span class="ni">👩‍🏫</span>Our Mentors</a>
+
+  <div class="nav-section-label">Account</div>
+  <a class="nav-item" onclick="showPage('editprofile',this)"><span class="ni">✏️</span>Edit Child's Profile</a>
+  <a class="nav-item" onclick="showPage('help',this)"><span class="ni">💬</span>Help & Support<span class="nav-badge">3</span></a>
+
+  <div class="sidebar-bottom">
+    <a class="nav-item" href="student-dashboard.html"><span class="ni">🧒</span>Child's Dashboard</a>
+    <a class="nav-item" href="book-demo.html"><span class="ni">🎓</span>Book a Class</a>
+    <a class="nav-item" onclick="logout()"><span class="ni">🚪</span>Log Out</a>
+  </div>
+</div>
+
+<div id="overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:199;" onclick="closeSidebar()"></div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <a href="book-demo.html" class="topbar-btn">🎓 Book a Class</a>
+      <button class="notif-btn" onclick="showModal('notif')">🔔<div class="notif-dot"></div></button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE 1 — OVERVIEW / DASHBOARD
+  ══════════════════════════════════════════════ -->
+  <div class="content active" id="page-overview">
+
+    <!-- Child Banner -->
+    <div class="child-banner">
+      <div class="cb-left">
+        <div class="cb-avatar" id="bannerAvatar">😊</div>
+        <div>
+          <div class="cb-name" id="bannerChildName">Aarav Sharma</div>
+          <div class="cb-meta">Class 7 · DPS Bengaluru · Student ID: LK-2025-00421</div>
+          <div class="cb-tags">
+            <span class="cb-tag">💻 Coding</span>
+            <span class="cb-tag">🤖 Robotics</span>
+            <span class="cb-tag">💰 Finance</span>
+            <span class="cb-tag">🔥 12-day streak</span>
+          </div>
+        </div>
+      </div>
+      <div class="cb-right">
+        <div class="cb-stat"><div class="cb-stat-num">62%</div><div class="cb-stat-lbl">Avg Progress</div></div>
+        <div class="cb-stat"><div class="cb-stat-num">7</div><div class="cb-stat-lbl">Badges</div></div>
+        <div class="cb-stat"><div class="cb-stat-num">24h</div><div class="cb-stat-lbl">Learned</div></div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="overview-grid">
+      <div class="stat-tile">
+        <div class="st-icon" style="background:#fff0f0;">✅</div>
+        <div>
+          <div class="st-val">18</div>
+          <div class="st-lbl">Lessons Completed</div>
+          <div class="st-delta delta-up">↑ 4 this week</div>
+        </div>
+      </div>
+      <div class="stat-tile">
+        <div class="st-icon" style="background:#edfafa;">📅</div>
+        <div>
+          <div class="st-val">94%</div>
+          <div class="st-lbl">Attendance Rate</div>
+          <div class="st-delta delta-up">↑ Above average</div>
+        </div>
+      </div>
+      <div class="stat-tile">
+        <div class="st-icon" style="background:#e8fff0;">🏅</div>
+        <div>
+          <div class="st-val">7</div>
+          <div class="st-lbl">Badges Earned</div>
+          <div class="st-delta delta-up">↑ 1 this week</div>
+        </div>
+      </div>
+      <div class="stat-tile">
+        <div class="st-icon" style="background:#fffbea;">🔥</div>
+        <div>
+          <div class="st-val">12</div>
+          <div class="st-lbl">Day Streak</div>
+          <div class="st-delta delta-up">Personal best!</div>
+        </div>
+      </div>
+      <div class="stat-tile">
+        <div class="st-icon" style="background:#f3eeff;">⭐</div>
+        <div>
+          <div class="st-val">Level 4</div>
+          <div class="st-lbl">Current Level</div>
+          <div class="st-delta delta-up">Builder rank</div>
+        </div>
+      </div>
+      <div class="stat-tile">
+        <div class="st-icon" style="background:#fff5f5;">📜</div>
+        <div>
+          <div class="st-val">2</div>
+          <div class="st-lbl">Certificates</div>
+          <div class="st-delta delta-warn">1 almost done</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress + Upcoming -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">📊 Course Progress</div>
+          <a class="card-link" onclick="showPage('progress',document.querySelectorAll('.nav-item')[1])">Full report →</a>
+        </div>
+        <div class="prog-list">
+          <div class="prog-row">
+            <div class="prog-header"><div class="prog-name">💻 Coding & Python</div><div class="prog-pct">65%</div></div>
+            <div class="prog-bar"><div class="prog-fill pf-coral" style="width:65%"></div></div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-header"><div class="prog-name">🤖 Robotics & AI</div><div class="prog-pct">40%</div></div>
+            <div class="prog-bar"><div class="prog-fill pf-teal" style="width:40%"></div></div>
+          </div>
+          <div class="prog-row">
+            <div class="prog-header"><div class="prog-name">💰 Financial Literacy</div><div class="prog-pct">80%</div></div>
+            <div class="prog-bar"><div class="prog-fill pf-yellow" style="width:80%"></div></div>
+          </div>
+        </div>
+
+        <!-- Attendance -->
+        <div style="margin-top:18px;padding-top:16px;border-top:1px solid #f0f0f8;">
+          <div class="card-head" style="margin-bottom:10px;">
+            <div class="card-title">📅 This Week's Attendance</div>
+          </div>
+          <div class="attend-week">
+            <div class="attend-day"><div class="attend-day-name">Mon</div><div class="attend-circle ac-present">✓</div></div>
+            <div class="attend-day"><div class="attend-day-name">Tue</div><div class="attend-circle ac-na">—</div></div>
+            <div class="attend-day"><div class="attend-day-name">Wed</div><div class="attend-circle ac-absent">✗</div></div>
+            <div class="attend-day"><div class="attend-day-name">Thu</div><div class="attend-circle ac-na">—</div></div>
+            <div class="attend-day"><div class="attend-day-name">Fri</div><div class="attend-circle ac-na">—</div></div>
+            <div class="attend-day"><div class="attend-day-name">Sat</div><div class="attend-circle ac-present">✓</div></div>
+            <div class="attend-day"><div class="attend-day-name">Sun</div><div class="attend-circle ac-na">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px;">
+        <!-- Upcoming Classes -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">📅 Upcoming Classes</div></div>
+          <div class="class-list">
+            <div class="class-row">
+              <div class="class-color" style="background:var(--coral);"></div>
+              <div class="class-info">
+                <div class="class-name">Python — Lists & Loops</div>
+                <div class="class-meta">Today · 11:00 AM · Sneha Ma'am</div>
+              </div>
+              <div class="class-status" style="background:#fff0f0;color:var(--coral);">Today</div>
+            </div>
+            <div class="class-row">
+              <div class="class-color" style="background:var(--teal);"></div>
+              <div class="class-info">
+                <div class="class-name">Robotics — IR Sensors</div>
+                <div class="class-meta">Mon · 4:00 PM · Aryan Sir</div>
+              </div>
+              <div class="class-status" style="background:#edfafa;color:#2aaba0;">Mon</div>
+            </div>
+            <div class="class-row">
+              <div class="class-color" style="background:var(--yellow);"></div>
+              <div class="class-info">
+                <div class="class-name">Finance — Savings Goals</div>
+                <div class="class-meta">Wed · 6:00 PM · Kavya Ma'am</div>
+              </div>
+              <div class="class-status" style="background:#fffbea;color:#c49a00;">Wed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="card">
+          <div class="card-head"><div class="card-title">🔔 Updates</div></div>
+          <div class="alerts-list">
+            <div class="alert-item good">
+              <div class="alert-icon">🏅</div>
+              <div class="alert-text">
+                <div class="alert-title">New Badge Earned!</div>
+                <div class="alert-sub">Aarav earned the "Quiz Champ" badge — 9/10 in Finance.</div>
+              </div>
+              <div class="alert-time">Today</div>
+            </div>
+            <div class="alert-item warn">
+              <div class="alert-icon">⚠️</div>
+              <div class="alert-text">
+                <div class="alert-title">Missed class on Wed</div>
+                <div class="alert-sub">Recording is available to watch anytime.</div>
+              </div>
+              <div class="alert-time">May 7</div>
+            </div>
+            <div class="alert-item info">
+              <div class="alert-icon">📜</div>
+              <div class="alert-text">
+                <div class="alert-title">Certificate almost ready</div>
+                <div class="alert-sub">2 more lessons to complete Coding Module 2.</div>
+              </div>
+              <div class="alert-time">May 6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE 2 — PROGRESS REPORT
+  ══════════════════════════════════════════════ -->
+  <div class="content" id="page-progress">
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--navy);margin-bottom:4px;">Aarav's Full Progress Report 📊</div>
+      <div style="font-size:0.82rem;color:var(--muted);font-weight:600;">Last updated: Today, 9:30 AM · All 3 programs</div>
+    </div>
+
+    <div class="module-cards">
+      <div class="module-card" style="border-top-color:var(--coral);">
+        <div class="mc-icon">💻</div>
+        <div class="mc-course">Coding Program</div>
+        <div class="mc-title">Python Fundamentals</div>
+        <div class="mc-progress"><div class="mc-fill pf-coral" style="width:65%"></div></div>
+        <div class="mc-stats"><span>13 / 20 lessons</span><span>65%</span></div>
+        <div class="mc-last">Last class: Today · Lists & Loops</div>
+        <div class="mc-last" style="margin-top:4px;">Current module: Python Fundamentals</div>
+        <div class="mc-mentor">
+          <div class="mc-mentor-face">👩‍💻</div>
+          <div><div class="mc-mentor-name">Sneha Rao</div><div class="mc-mentor-role">Coding Mentor · IIT Bengaluru</div></div>
+        </div>
+      </div>
+      <div class="module-card" style="border-top-color:var(--teal);">
+        <div class="mc-icon">🤖</div>
+        <div class="mc-course">Robotics Program</div>
+        <div class="mc-title">Build Your First Robot</div>
+        <div class="mc-progress"><div class="mc-fill pf-teal" style="width:40%"></div></div>
+        <div class="mc-stats"><span>8 / 20 lessons</span><span>40%</span></div>
+        <div class="mc-last">Last class: Thu · Motor assembly</div>
+        <div class="mc-last" style="margin-top:4px;">Current module: Robot Building</div>
+        <div class="mc-mentor">
+          <div class="mc-mentor-face">👨‍💻</div>
+          <div><div class="mc-mentor-name">Aryan Singh</div><div class="mc-mentor-role">Robotics Mentor · NIT Delhi</div></div>
+        </div>
+      </div>
+      <div class="module-card" style="border-top-color:var(--yellow);">
+        <div class="mc-icon">💰</div>
+        <div class="mc-course">Finance Program</div>
+        <div class="mc-title">Saving & Budgeting</div>
+        <div class="mc-progress"><div class="mc-fill pf-yellow" style="width:80%"></div></div>
+        <div class="mc-stats"><span>16 / 20 lessons</span><span>80%</span></div>
+        <div class="mc-last">Last class: Wed · Smart spending</div>
+        <div class="mc-last" style="margin-top:4px;">Next: Savings goal worksheet</div>
+        <div class="mc-mentor">
+          <div class="mc-mentor-face">👩‍🏫</div>
+          <div><div class="mc-mentor-name">Kavya Menon</div><div class="mc-mentor-role">Finance Mentor · BITS Pilani</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badges earned -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head"><div class="card-title">🏅 Badges Earned (7 of 12)</div></div>
+      <div class="badges-row">
+        <div class="badge-pill"><span class="badge-emoji">🚀</span><div><div class="badge-pill-name">First Launch</div><div class="badge-pill-date">Apr 1</div></div></div>
+        <div class="badge-pill"><span class="badge-emoji">💻</span><div><div class="badge-pill-name">Code Starter</div><div class="badge-pill-date">Apr 5</div></div></div>
+        <div class="badge-pill"><span class="badge-emoji">🤖</span><div><div class="badge-pill-name">Bot Builder</div><div class="badge-pill-date">Apr 12</div></div></div>
+        <div class="badge-pill"><span class="badge-emoji">💰</span><div><div class="badge-pill-name">Money Wise</div><div class="badge-pill-date">Apr 18</div></div></div>
+        <div class="badge-pill"><span class="badge-emoji">🎮</span><div><div class="badge-pill-name">Game Creator</div><div class="badge-pill-date">Apr 25</div></div></div>
+        <div class="badge-pill"><span class="badge-emoji">🔥</span><div><div class="badge-pill-name">On Fire!</div><div class="badge-pill-date">May 5</div></div></div>
+        <div class="badge-pill"><span class="badge-emoji">⭐</span><div><div class="badge-pill-name">Quiz Champ</div><div class="badge-pill-date">May 9</div></div></div>
+      </div>
+    </div>
+
+    <!-- Certificates -->
+    <div class="card">
+      <div class="card-head"><div class="card-title">📜 Certificates</div></div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:14px;padding:13px;background:var(--light-bg);border-radius:12px;">
+          <div style="font-size:1.4rem;">📜</div>
+          <div style="flex:1;"><div style="font-size:0.85rem;font-weight:800;color:var(--navy);margin-bottom:2px;">Financial Literacy — Module 1</div><div style="font-size:0.72rem;color:var(--muted);font-weight:600;">Issued April 20, 2025</div></div>
+          <button class="hcc-btn" style="width:auto;padding:7px 16px;" onclick="showModal('cert')">Download</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:13px;background:var(--light-bg);border-radius:12px;">
+          <div style="font-size:1.4rem;">📜</div>
+          <div style="flex:1;"><div style="font-size:0.85rem;font-weight:800;color:var(--navy);margin-bottom:2px;">Scratch Coding — Beginner</div><div style="font-size:0.72rem;color:var(--muted);font-weight:600;">Issued March 15, 2025</div></div>
+          <button class="hcc-btn" style="width:auto;padding:7px 16px;" onclick="showModal('cert')">Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE 3 — OUR MENTORS
+  ══════════════════════════════════════════════ -->
+  <div class="content" id="page-teachers">
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--navy);margin-bottom:4px;">Aarav's Mentors 👩‍🏫</div>
+      <div style="font-size:0.82rem;color:var(--muted);font-weight:600;">All mentors are background-verified and trained to teach kids. You can message or schedule a call directly.</div>
+    </div>
+    <div class="teachers-grid">
+
+      <div class="teacher-card">
+        <div class="tc-top">
+          <div class="tc-avatar" style="background:#fff0f0;">👩‍💻</div>
+          <div>
+            <div class="tc-name">Sneha Rao</div>
+            <div class="tc-subject">Coding & Python Mentor</div>
+            <div class="tc-pills">
+              <span class="tc-pill" style="background:#fff0f0;color:var(--coral);">Python</span>
+              <span class="tc-pill" style="background:#fff0f0;color:var(--coral);">Web Dev</span>
+              <span class="tc-pill" style="background:#fff0f0;color:var(--coral);">Scratch</span>
+            </div>
+          </div>
+        </div>
+        <div class="tc-divider"></div>
+        <div class="tc-info-row"><span class="tc-info-label">Institution</span><span class="tc-info-val">IIT Bengaluru</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Teaching since</span><span class="tc-info-val">2020 (5 years)</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Students taught</span><span class="tc-info-val">240+</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Aarav's batch</span><span class="tc-info-val">Batch A · Sat 11AM</span></div>
+        <div class="tc-info-row">
+          <span class="tc-info-label">Rating</span>
+          <div class="tc-rating"><span class="tc-stars">★★★★★</span><span class="tc-rating-num">4.9</span></div>
+        </div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:8px;font-style:italic;">"Aarav is picking up Python concepts really fast — his Snake Game project was excellent! He should try the next module soon."</div>
+        <div class="tc-actions">
+          <button class="tc-btn" onclick="showModal('message')">💬 Message</button>
+          <button class="tc-btn primary" onclick="showModal('schedule')">📅 Schedule Call</button>
+        </div>
+      </div>
+
+      <div class="teacher-card">
+        <div class="tc-top">
+          <div class="tc-avatar" style="background:#edfafa;">👨‍💻</div>
+          <div>
+            <div class="tc-name">Aryan Singh</div>
+            <div class="tc-subject">Robotics & AI Mentor</div>
+            <div class="tc-pills">
+              <span class="tc-pill" style="background:#edfafa;color:#2aaba0;">Arduino</span>
+              <span class="tc-pill" style="background:#edfafa;color:#2aaba0;">AI/ML</span>
+              <span class="tc-pill" style="background:#edfafa;color:#2aaba0;">IoT</span>
+            </div>
+          </div>
+        </div>
+        <div class="tc-divider"></div>
+        <div class="tc-info-row"><span class="tc-info-label">Institution</span><span class="tc-info-val">NIT Delhi</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Teaching since</span><span class="tc-info-val">2021 (4 years)</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Students taught</span><span class="tc-info-val">180+</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Aarav's batch</span><span class="tc-info-val">Batch B · Mon 4PM</span></div>
+        <div class="tc-info-row">
+          <span class="tc-info-label">Rating</span>
+          <div class="tc-rating"><span class="tc-stars">★★★★★</span><span class="tc-rating-num">4.8</span></div>
+        </div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:8px;font-style:italic;">"Aarav assembled the robot chassis beautifully and his debugging instinct is impressive for his age. Looking forward to the sensor module!"</div>
+        <div class="tc-actions">
+          <button class="tc-btn" onclick="showModal('message')">💬 Message</button>
+          <button class="tc-btn primary" onclick="showModal('schedule')">📅 Schedule Call</button>
+        </div>
+      </div>
+
+      <div class="teacher-card">
+        <div class="tc-top">
+          <div class="tc-avatar" style="background:#fffbea;">👩‍🏫</div>
+          <div>
+            <div class="tc-name">Kavya Menon</div>
+            <div class="tc-subject">Financial Literacy Mentor</div>
+            <div class="tc-pills">
+              <span class="tc-pill" style="background:#fffbea;color:#c49a00;">Budgeting</span>
+              <span class="tc-pill" style="background:#fffbea;color:#c49a00;">Investing</span>
+              <span class="tc-pill" style="background:#fffbea;color:#c49a00;">Business</span>
+            </div>
+          </div>
+        </div>
+        <div class="tc-divider"></div>
+        <div class="tc-info-row"><span class="tc-info-label">Institution</span><span class="tc-info-val">BITS Pilani</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Teaching since</span><span class="tc-info-val">2019 (6 years)</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Students taught</span><span class="tc-info-val">320+</span></div>
+        <div class="tc-info-row"><span class="tc-info-label">Aarav's batch</span><span class="tc-info-val">Batch C · Wed 6PM</span></div>
+        <div class="tc-info-row">
+          <span class="tc-info-label">Rating</span>
+          <div class="tc-rating"><span class="tc-stars">★★★★★</span><span class="tc-rating-num">4.9</span></div>
+        </div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:8px;font-style:italic;">"Aarav scored 9/10 in our savings quiz — he's really engaging with the concepts! He'll be ready for the investing module very soon."</div>
+        <div class="tc-actions">
+          <button class="tc-btn" onclick="showModal('message')">💬 Message</button>
+          <button class="tc-btn primary" onclick="showModal('schedule')">📅 Schedule Call</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE 4 — EDIT CHILD'S PROFILE
+  ══════════════════════════════════════════════ -->
+  <div class="content" id="page-editprofile">
+    <div style="margin-bottom:20px;">
+      <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;color:var(--navy);margin-bottom:4px;">Edit Child's Profile ✏️</div>
+      <div style="font-size:0.82rem;color:var(--muted);font-weight:600;">Update your child's information. Changes are saved instantly and reflected across all their classes.</div>
+    </div>
+
+    <div class="edit-layout">
+      <!-- Left: avatar + quick info -->
+      <div>
+        <div class="profile-card-left">
+          <div class="profile-avatar-big" id="editAvatarBig" onclick="">
+            <span id="editAvatarDisplay">😊</span>
+            <div class="avatar-edit-overlay">Change</div>
+          </div>
+          <div style="font-size:0.72rem;font-weight:700;color:var(--muted);text-align:center;margin-bottom:10px;">Tap to change avatar</div>
+          <div class="avatar-picker" id="avatarPicker">
+            <button class="av-btn selected" onclick="setAvatar(this,'😊')">😊</button>
+            <button class="av-btn" onclick="setAvatar(this,'😎')">😎</button>
+            <button class="av-btn" onclick="setAvatar(this,'🤩')">🤩</button>
+            <button class="av-btn" onclick="setAvatar(this,'😄')">😄</button>
+            <button class="av-btn" onclick="setAvatar(this,'🦸')">🦸</button>
+            <button class="av-btn" onclick="setAvatar(this,'🧑‍🚀')">🧑‍🚀</button>
+            <button class="av-btn" onclick="setAvatar(this,'🧑‍🎨')">🧑‍🎨</button>
+            <button class="av-btn" onclick="setAvatar(this,'🧑‍🔬')">🧑‍🔬</button>
+            <button class="av-btn" onclick="setAvatar(this,'🧑‍💻')">🧑‍💻</button>
+            <button class="av-btn" onclick="setAvatar(this,'🌟')">🌟</button>
+          </div>
+          <div class="student-card-name" id="previewName">Aarav Sharma</div>
+          <div class="student-card-id">ID: LK-2025-00421</div>
+          <div class="profile-quick-stats">
+            <div class="pqs-row"><span class="pqs-label">Level</span><span class="pqs-val">4 — Builder</span></div>
+            <div class="pqs-row"><span class="pqs-label">XP</span><span class="pqs-val">720 / 1000</span></div>
+            <div class="pqs-row"><span class="pqs-label">Streak</span><span class="pqs-val">🔥 12 days</span></div>
+            <div class="pqs-row"><span class="pqs-label">Member since</span><span class="pqs-val">March 2025</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: full form -->
+      <div class="form-card">
+        <div class="form-section-title">👤 Personal Details</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">First Name *</label>
+            <input class="form-input" id="fFirstName" value="Aarav" oninput="updatePreviewName()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name *</label>
+            <input class="form-input" id="fLastName" value="Sharma" oninput="updatePreviewName()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input class="form-input" type="date" value="2013-04-15">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input class="form-input" value="12 years" readonly style="opacity:0.6;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Current Grade / Class *</label>
+            <select class="form-input">
+              <option>Class 6</option><option selected>Class 7</option><option>Class 8</option>
+              <option>Class 9</option><option>Class 10</option><option>Class 11</option><option>Class 12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">School Board</label>
+            <select class="form-input">
+              <option selected>CBSE</option><option>ICSE</option><option>State Board</option>
+              <option>IB</option><option>IGCSE</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">School Name</label>
+            <input class="form-input" value="Delhi Public School, Bengaluru">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <select class="form-input">
+              <option selected>Bengaluru</option><option>Mumbai</option><option>Delhi/NCR</option>
+              <option>Chennai</option><option>Hyderabad</option><option>Pune</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Learning Language</label>
+            <select class="form-input">
+              <option selected>English</option><option>Hindi</option><option>No preference</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section-title">⏰ Class Preferences</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Preferred Day</label>
+            <select class="form-input">
+              <option selected>Saturday</option><option>Sunday</option><option>Weekdays</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preferred Time</label>
+            <select class="form-input">
+              <option>9:00 AM</option><option selected>11:00 AM</option><option>4:00 PM</option><option>6:00 PM</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Any notes for the mentor?</label>
+            <textarea class="form-input" rows="2" style="resize:none;">Aarav prefers more project-based tasks over theory. He loves building things!</textarea>
+          </div>
+        </div>
+
+        <div class="form-section-title">🏥 Emergency & Health</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Emergency Contact Name</label>
+            <input class="form-input" value="Priya Sharma">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Emergency Phone</label>
+            <input class="form-input" value="+91 98765 43210">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Any medical / learning needs? (optional)</label>
+            <input class="form-input" placeholder="e.g. dyslexia, ADHD — so mentors can support better">
+          </div>
+        </div>
+
+        <div class="save-row">
+          <button class="save-btn" onclick="saveProfile()">💾 Save Changes</button>
+          <span class="save-status" id="saveStatus">✓ Changes saved successfully!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE 5 — HELP & SUPPORT
+  ══════════════════════════════════════════════ -->
+  <div class="content" id="page-help">
+    <div class="help-hero">
+      <div class="hh-text">
+        <h2>How can we help? 💬</h2>
+        <p>Our support team is available Mon–Sat, 9AM–7PM IST. Average response time under 2 hours. We speak Hindi & English.</p>
+      </div>
+      <div class="hh-actions">
+        <button class="hh-btn primary" onclick="showModal('whatsapp')">💬 WhatsApp Us</button>
+        <button class="hh-btn outline" onclick="showModal('callback')">📞 Request Callback</button>
+      </div>
+    </div>
+
+    <div class="help-three">
+      <div class="help-contact-card">
+        <div class="hcc-icon">💬</div>
+        <div class="hcc-title">WhatsApp Support</div>
+        <div class="hcc-sub">Chat with our team directly on WhatsApp. Fast, friendly and in your language. Available 9AM–7PM.</div>
+        <button class="hcc-btn" onclick="showModal('whatsapp')">Open WhatsApp →</button>
+      </div>
+      <div class="help-contact-card">
+        <div class="hcc-icon">📧</div>
+        <div class="hcc-title">Email Support</div>
+        <div class="hcc-sub">Send us a detailed message. We respond within 4 hours on working days. Great for billing & account queries.</div>
+        <button class="hcc-btn" onclick="showModal('email')">Send Email →</button>
+      </div>
+      <div class="help-contact-card">
+        <div class="hcc-icon">📞</div>
+        <div class="hcc-title">Phone / Callback</div>
+        <div class="hcc-sub">Request a callback and one of our counsellors will call you within 30 minutes during working hours.</div>
+        <button class="hcc-btn" onclick="showModal('callback')">Request Call →</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head"><div class="card-title">❓ Frequently Asked Questions</div></div>
+      <div class="faq-list" id="faqList">
+        <div class="faq-item open">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I reschedule a missed class? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a"><p>If Aarav misses a class, the recording is automatically added to their dashboard within 2 hours. To reschedule a live replacement class, contact your mentor directly via the Mentors page or WhatsApp us. We allow up to 2 reschedules per month free of charge.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I upgrade or change the program plan? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a"><p>You can upgrade to the Explorer or Innovator plan anytime from the Pricing page. Downgrades apply from the next billing cycle. To change specific programs (e.g. swap Robotics for Finance), WhatsApp us and we'll adjust with no extra fee.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">When will Aarav receive their certificate? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a"><p>Certificates are issued automatically when a complete module is finished (all lessons + the module project). You'll get an email notification and can download the PDF from the Progress Report page instantly. Aarav is 2 lessons away from their next certificate!</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">How do I pause or cancel the subscription? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a"><p>You can pause your subscription for up to 1 month (e.g. for exams) without losing progress or your spot in the batch. To cancel, email us or WhatsApp us at least 5 days before your next billing date. We offer a full refund within 7 days of joining if you're not happy.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">Is the platform safe for children? <span class="faq-arrow">▼</span></div>
+          <div class="faq-a"><p>Absolutely. All classes are live and recorded — you can watch any class your child attended. All mentors are background-verified. There are no ads, no social features, and all data is stored securely. The platform is fully COPPA-compliant and never shares data with third parties.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-bottom">
+      <div class="tip-card">
+        <div class="tip-card-title">💡 Tips for Parents</div>
+        <div class="tip-list">
+          <div class="tip-item"><span class="tip-icon">📅</span><span class="tip-text">Check this dashboard weekly — 10 minutes a week is enough to stay on top of Aarav's progress.</span></div>
+          <div class="tip-item"><span class="tip-icon">💬</span><span class="tip-text">Ask Aarav what they built in class today — it reinforces learning and shows you care!</span></div>
+          <div class="tip-item"><span class="tip-icon">🔔</span><span class="tip-text">Turn on WhatsApp notifications to get instant alerts for class starts, badges and certificates.</span></div>
+          <div class="tip-item"><span class="tip-icon">🏆</span><span class="tip-text">Celebrate badges and certificates — even small wins keep kids motivated and excited to learn.</span></div>
+          <div class="tip-item"><span class="tip-icon">📞</span><span class="tip-text">Schedule a termly call with the mentor to get personalised guidance on Aarav's learning path.</span></div>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-title">🔗 Quick Links</div>
+        <div class="tip-list">
+          <div class="tip-item"><span class="tip-icon">🎓</span><a href="book-demo.html" style="font-size:0.8rem;color:var(--coral);font-weight:700;text-decoration:none;">Book an extra class or trial</a></div>
+          <div class="tip-item"><span class="tip-icon">📚</span><a href="programs.html" style="font-size:0.8rem;color:var(--coral);font-weight:700;text-decoration:none;">Explore all programs & pricing</a></div>
+          <div class="tip-item"><span class="tip-icon">🎯</span><a href="assessment.html" style="font-size:0.8rem;color:var(--coral);font-weight:700;text-decoration:none;">Retake the level assessment</a></div>
+          <div class="tip-item"><span class="tip-icon">🧒</span><a href="student-dashboard.html" style="font-size:0.8rem;color:var(--coral);font-weight:700;text-decoration:none;">View Aarav's student dashboard</a></div>
+          <div class="tip-item"><span class="tip-icon">🔒</span><a href="#" style="font-size:0.8rem;color:var(--coral);font-weight:700;text-decoration:none;">Privacy policy & data settings</a></div>
+          <div class="tip-item"><span class="tip-icon">💳</span><a href="#" style="font-size:0.8rem;color:var(--coral);font-weight:700;text-decoration:none;">Billing & subscription management</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModalIf(event)">
+  <div class="modal">
+    <span class="modal-emoji" id="mEmoji">💬</span>
+    <div class="modal-title" id="mTitle">Title</div>
+    <div class="modal-sub" id="mSub">Sub</div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" id="mBtn" onclick="closeModal()">Got it!</button>
+      <button class="modal-btn outline" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── LOAD PARENT DATA ───
+const PARENT_NAME   = localStorage.getItem('lk_parent_name')  || 'Priya Sharma';
+const CHILD_NAME    = localStorage.getItem('lk_name')         || 'Aarav Sharma';
+const CHILD_AVATAR  = localStorage.getItem('lk_avatar')       || '😊';
+
+// Apply
+document.getElementById('sideParentName').textContent = PARENT_NAME;
+document.getElementById('sideChildName').textContent  = CHILD_NAME;
+document.getElementById('sideChildAvatar').textContent = CHILD_AVATAR;
+document.getElementById('bannerChildName').textContent = CHILD_NAME;
+document.getElementById('bannerAvatar').textContent    = CHILD_AVATAR;
+document.getElementById('editAvatarDisplay').textContent = CHILD_AVATAR;
+document.getElementById('previewName').textContent    = CHILD_NAME;
+const parts = CHILD_NAME.split(' ');
+if(document.getElementById('fFirstName')) document.getElementById('fFirstName').value = parts[0] || '';
+if(document.getElementById('fLastName'))  document.getElementById('fLastName').value  = parts.slice(1).join(' ') || '';
+
+// ─── PAGE NAV ───
+function showPage(id, el) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if(el) el.classList.add('active');
+  const titles = { overview:'Dashboard', progress:'Progress Report', teachers:'Our Mentors', editprofile:"Edit Child's Profile", help:'Help & Support' };
+  document.getElementById('pageTitle').textContent = titles[id] || 'Parent Portal';
+  closeSidebar();
+}
+
+// ─── SIDEBAR MOBILE ───
+function toggleSidebar() { const s=document.getElementById('sidebar'); s.classList.toggle('open'); document.getElementById('overlay').style.display=s.classList.contains('open')?'block':'none'; }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').style.display='none'; }
+
+// ─── AVATAR PICKER ───
+function setAvatar(btn, emoji) {
+  document.querySelectorAll('.av-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('editAvatarDisplay').textContent = emoji;
+  document.getElementById('sideChildAvatar').textContent   = emoji;
+  document.getElementById('bannerAvatar').textContent      = emoji;
+  localStorage.setItem('lk_avatar', emoji);
+}
+
+// ─── PREVIEW NAME ───
+function updatePreviewName() {
+  const fn = document.getElementById('fFirstName').value;
+  const ln = document.getElementById('fLastName').value;
+  const full = (fn + ' ' + ln).trim();
+  document.getElementById('previewName').textContent     = full;
+  document.getElementById('sideChildName').textContent   = full;
+  document.getElementById('bannerChildName').textContent = full;
+}
+
+// ─── SAVE PROFILE ───
+function saveProfile() {
+  const fn = document.getElementById('fFirstName').value.trim();
+  const ln = document.getElementById('fLastName').value.trim();
+  const full = (fn + ' ' + ln).trim();
+  localStorage.setItem('lk_name', full);
+  const av = document.getElementById('editAvatarDisplay').textContent;
+  localStorage.setItem('lk_avatar', av);
+  const st = document.getElementById('saveStatus');
+  st.style.display = 'inline';
+  setTimeout(() => st.style.display = 'none', 3000);
+}
+
+// ─── FAQ ACCORDION ───
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
+
+// ─── MODALS ───
+const MODALS = {
+  notif:    { emoji:'🔔', title:'Notifications', sub:'• Aarav earned "Quiz Champ" badge today!\n• Missed class on Wed — recording available.\n• Python certificate: 2 lessons away!\n• Coding class today at 11:00 AM.', btn:'Mark all read' },
+  whatsapp: { emoji:'💬', title:'Opening WhatsApp', sub:'In the live version this opens a WhatsApp chat with our support team at +91 80000 00000. Available Mon–Sat, 9AM–7PM IST.', btn:'Got it!' },
+  email:    { emoji:'📧', title:'Email Support', sub:'Send us an email at support@leapkids.in. We respond within 4 hours on working days. Please include your child\'s Student ID for faster help.', btn:'Copy Email' },
+  callback: { emoji:'📞', title:'Callback Requested', sub:'Our counsellor will call you on your registered number +91 98765 43210 within 30 minutes during working hours (Mon–Sat 9AM–7PM IST).', btn:'Confirmed!' },
+  message:  { emoji:'💬', title:'Message Mentor', sub:'In the live version this opens a direct chat with your child\'s mentor. They typically respond within a few hours. For urgent issues use WhatsApp support instead.', btn:'Got it!' },
+  schedule: { emoji:'📅', title:'Schedule a Call', sub:'You can book a 15-minute parent–mentor call. In the live version this shows available slots on the mentor\'s calendar. Calls are free up to once per month.', btn:'Got it!' },
+  cert:     { emoji:'📜', title:'Downloading Certificate', sub:'Your child\'s LeapKids certificate is being prepared. In the live version this downloads a high-quality PDF you can print or share.', btn:'Got it!' },
+};
+function showModal(type) {
+  const m = MODALS[type];
+  if(!m) return;
+  document.getElementById('mEmoji').textContent = m.emoji;
+  document.getElementById('mTitle').textContent = m.title;
+  document.getElementById('mSub').style.whiteSpace = 'pre-line';
+  document.getElementById('mSub').textContent   = m.sub;
+  document.getElementById('mBtn').textContent   = m.btn;
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal()          { document.getElementById('modalBg').classList.remove('open'); }
+function closeModalIf(e)       { if(e.target===document.getElementById('modalBg')) closeModal(); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ─── ANIMATE PROGRESS BARS ───
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.prog-fill,.mc-fill,.cpb-fill').forEach(el => {
+      const w = el.style.width; el.style.width = '0%';
+      setTimeout(() => el.style.width = w, 300);
+    });
+  }, 200);
+});
+
+// ─── LOGOUT ───
+function logout() {
+  localStorage.removeItem('lk_role');
+  window.location.href = 'login.html';
+}
+</script>
+</body>
+</html>
